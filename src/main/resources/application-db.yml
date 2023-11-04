@@ -1,0 +1,35 @@
+spring:
+  config:
+    activate:
+      on-profile: "dev"
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3305/sms_db
+    username: root
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: create
+---
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+---
+spring:
+  config:
+    activate:
+      on-profile: "test"
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3305/sms_db
+    username: root
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: create
