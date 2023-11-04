@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  database:
+    container_name: sms_mysql
+    image: mysql/mysql-server:5.7
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      TZ: 'Asia/Seoul'
+    ports:
+      - "3306:3306"
+    command:
+      - "mysqld"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    networks:
+      - sms_network
+
+  application:
+    container_name: sms_server
+    restart: on-failure
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://sms_mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    depends_on:
+      - database
+    networks:
+      - sms_network
+
+networks:
+  sms_network:
