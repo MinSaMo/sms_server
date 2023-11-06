@@ -30,7 +30,7 @@ class ChartControllerTest {
   @Test
   void 금일_차트조회_응답_테스트() throws Exception {
 
-    String url = domain + "/today";
+    String url = domain + "/today_abbreviation";
 
     String result = mockMvc.perform(get(url))
         .andExpect(
