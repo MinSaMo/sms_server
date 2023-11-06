@@ -7,7 +7,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import java.time.LocalDateTime;
+import lombok.Getter;
 
+@Getter
 @Entity(name = "interviews")
 public class Interview {
 
@@ -16,9 +19,11 @@ public class Interview {
   @Column(name = "itv_id")
   private Long id;
 
-  @OneToOne
-  @JoinColumn(name = "itv_question_id")
-  private Message question;
+  @Column(name = "itv_question_id")
+  private String question;
+
+  @Column(name = "itv_time")
+  private LocalDateTime questionTime;
 
   @OneToOne
   @JoinColumn(name = "itv_dialog_id")
