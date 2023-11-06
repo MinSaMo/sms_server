@@ -5,21 +5,25 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDateTime;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@Entity(name = "behaviors")
-public class Behavior {
+@Entity(name = "odd_messages")
+public class OddMessage {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "bhv_id")
+  @Column(name = "oddm_id")
   private Long id;
 
-  @Column(name = "bhv_captino")
-  private String caption;
+  @Setter
+  @Column(name = "oddm_reason")
+  private String reason;
 
-  @Column(name = "bhv_timestamp")
-  private LocalDateTime timestamp;
+  @OneToOne
+  @JoinColumn(name = "msg_id")
+  private Message message;
 }
