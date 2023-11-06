@@ -10,7 +10,7 @@ services:
     environment:
       TZ: 'Asia/Seoul'
     ports:
-      - "3306:3306"
+      - "3301:3306"
     command:
       - "mysqld"
       - "--character-set-server=utf8mb4"
@@ -25,7 +25,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8081:8080"
     env_file:
       - .env
     environment:
