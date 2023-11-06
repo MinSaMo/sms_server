@@ -5,8 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.List;
+import lombok.Getter;
 
+@Getter
 @Entity(name = "dialogs")
 public class Dialog {
 
@@ -17,4 +21,7 @@ public class Dialog {
 
   @Column(name = "dlg_timestamp")
   private LocalDateTime timestamp;
+
+  @OneToMany(mappedBy = "dialog")
+  private List<Message> messageList;
 }

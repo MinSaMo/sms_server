@@ -7,25 +7,25 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
-@Entity(name = "interviews")
-public class Interview {
+@Entity(name = "odd_behaviors")
+public class OddBehavior {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "itv_id")
+  @Column(name = "oddb_id")
   private Long id;
 
-  @Column(name = "itv_question_id")
-  private String question;
+  @Column(name = "oddb_reason")
+  private String reason;
 
-  @Column(name = "itv_time")
-  private LocalDateTime questionTime;
+  @Column(name = "oddb_video_id")
+  private Long videoId;
 
   @OneToOne
-  @JoinColumn(name = "itv_dialog_id")
-  private Dialog dialog;
+  @JoinColumn(name = "bhv_id")
+  private Behavior behavior;
+
 }
