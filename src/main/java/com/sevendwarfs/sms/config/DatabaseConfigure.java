@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class DatabaseInitiation {
+public class DatabaseConfigure {
 
   private final MemberRepository memberRepository;
 
