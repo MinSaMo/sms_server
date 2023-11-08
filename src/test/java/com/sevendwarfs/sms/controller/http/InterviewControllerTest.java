@@ -51,6 +51,15 @@ class InterviewControllerTest {
         InterviewResponseDto.class);
 
     assertEquals(question, response.getQuestion());
-    assertEquals(time, response.getQuestionTime());
+    assertEqualsOfTime(time, response.getQuestionTime());
+  }
+
+  void assertEqualsOfTime(LocalDateTime t1, LocalDateTime t2) {
+    assertEquals(t1.getYear(), t2.getYear());
+    assertEquals(t1.getMonth(), t2.getMonth());
+    assertEquals(t1.getDayOfMonth(), t2.getDayOfMonth());
+    assertEquals(t1.getHour(), t2.getHour());
+    assertEquals(t1.getMinute(), t2.getMinute());
+    assertEquals(t1.getSecond(), t2.getSecond());
   }
 }

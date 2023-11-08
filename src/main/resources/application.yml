@@ -2,3 +2,6 @@ spring:
   config:
     import:
       - classpath:application-db.yml
+
+openai:
+  key: ${OPENAI_API_KEY}
