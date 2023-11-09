@@ -6,10 +6,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity(name = "behaviors")
+@NoArgsConstructor
 public class Behavior {
 
   @Id
@@ -22,4 +25,18 @@ public class Behavior {
 
   @Column(name = "bhv_timestamp")
   private LocalDateTime timestamp;
+
+  @Builder
+  public Behavior(String caption) {
+    this.caption = caption;
+  }
+
+  @Override
+  public String toString() {
+    return "Behavior{" +
+        "id=" + id +
+        ", caption='" + caption + '\'' +
+        ", timestamp=" + timestamp +
+        '}';
+  }
 }

@@ -12,14 +12,18 @@ public class PromptManager {
   private final String messageClassify;
   private final String global;
   private final String daily;
+  private final String recognitionBehavior;
 
   @Autowired
+
   public PromptManager(
       @Value("${prompt.global}") String global,
       @Value("${prompt.message.classify}") String messageClassify,
-      @Value("${prompt.message.daily}") String daily) {
+      @Value("${prompt.message.daily}") String daily,
+      @Value("${prompt.behavior_recognition}") String recognitionBehavior) {
     this.global = global;
     this.messageClassify = messageClassify;
     this.daily = daily;
+    this.recognitionBehavior = recognitionBehavior;
   }
 }
