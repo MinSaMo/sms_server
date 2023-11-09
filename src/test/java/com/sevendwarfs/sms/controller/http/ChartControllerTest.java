@@ -1,6 +1,6 @@
 package com.sevendwarfs.sms.controller.http;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,7 +28,7 @@ class ChartControllerTest {
   final String domain = "/charts";
 
   @Test
-  void 금일_차트조회_응답_테스트() throws Exception {
+  void 금일_차트조회_목업_테스트() throws Exception {
 
     String url = domain + "/today_abbreviation";
 
@@ -41,11 +41,11 @@ class ChartControllerTest {
     ChartResponseDto mock = ChartResponseDto.mock();
     ChartResponseDto response = objectMapper.readValue(result, ChartResponseDto.class);
 
-    assertTrue(mock.equals(response));
+    assertEquals(mock, response);
   }
 
   @Test
-  void 이상발화및행동_응답_테스트() throws Exception {
+  void 이상발화및행동_목업_테스트() throws Exception {
     String url = domain + "/odd";
 
     String result = mockMvc.perform(get(url))
@@ -57,6 +57,6 @@ class ChartControllerTest {
     OddListResponseDto mock = OddListResponseDto.mock();
     OddListResponseDto response = objectMapper.readValue(result, OddListResponseDto.class);
 
-    assertTrue(mock.equals(response));
+    assertEquals(mock, response);
   }
 }

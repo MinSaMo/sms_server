@@ -12,31 +12,52 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @Slf4j
 public class GptService {
 
   @Getter(AccessLevel.PROTECTED)
-  private final OpenAiClient client;
-  private final long timeout = 60;
+  private final OpenAiClient mainClient;
+  @Getter(AccessLevel.PROTECTED)
+  private final OpenAiClient subClient;
   private final ObjectMapper objectMapper;
+  private final PromptManager promptManager;
+
+  private final long timeout = 60;
 
   @Autowired
-  public GptService(@Value("${openai.key}") String key, ObjectMapper objectMapper) {
-    client = OpenAiClient.builder()
-        .openAiApiKey(key)
+  public GptService(
+      @Value("${openai.key.main}") String mainKey,
+      @Value("${openai.key.sub}") String subKey,
+      ObjectMapper objectMapper, PromptManager promptManager) {
+    mainClient = OpenAiClient.builder()
+        .openAiApiKey(mainKey)
+        .callTimeout(Duration.ofSeconds(timeout))
+        .build();
+    subClient = OpenAiClient.builder()
+        .openAiApiKey(subKey)
         .callTimeout(Duration.ofSeconds(timeout))
         .build();
     this.objectMapper = objectMapper;
+    this.promptManager = promptManager;
   }
 
   public String ask(ChatCompletionRequest request) {
     log.info("gpt-request-message : {}", request.messages());
-    ChatCompletionResponse response = client.chatCompletion(request).execute();
+    ChatCompletionResponse response = executeOpenAI(mainClient, request);
     log.info("gpt-response : {}", response);
+    return getContent(response);
+  }
+
+  protected String getContent(ChatCompletionResponse response) {
     return response.choices().get(0).message().content();
+  }
+
+  protected ChatCompletionResponse executeOpenAI(OpenAiClient client,
+      ChatCompletionRequest request) {
+    return client.chatCompletion(request).execute();
   }
 
   public <T> T ask(ChatCompletionRequest request, Class<T> clazz) {
@@ -54,6 +75,7 @@ public class GptService {
 
   public ChatCompletionRequest.Builder request() {
     return ChatCompletionRequest.builder()
-        .model(Model.GPT_3_5_TURBO);
+        .model(Model.GPT_3_5_TURBO)
+        .addSystemMessage(promptManager.getGlobal());
   }
 }

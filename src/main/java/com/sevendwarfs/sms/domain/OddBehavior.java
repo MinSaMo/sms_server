@@ -7,10 +7,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity(name = "odd_behaviors")
+@NoArgsConstructor
 public class OddBehavior {
 
   @Id
@@ -28,4 +31,10 @@ public class OddBehavior {
   @JoinColumn(name = "bhv_id")
   private Behavior behavior;
 
+  @Builder
+  public OddBehavior(String reason, Long videoId, Behavior behavior) {
+    this.reason = reason;
+    this.videoId = videoId;
+    this.behavior = behavior;
+  }
 }
