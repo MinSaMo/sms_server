@@ -22,14 +22,16 @@ public class GptService {
   private final OpenAiClient mainClient;
   @Getter(AccessLevel.PROTECTED)
   private final OpenAiClient subClient;
-  private final long timeout = 60;
   private final ObjectMapper objectMapper;
+  private final PromptManager promptManager;
+
+  private final long timeout = 60;
 
   @Autowired
   public GptService(
       @Value("${openai.key.main}") String mainKey,
       @Value("${openai.key.sub}") String subKey,
-      ObjectMapper objectMapper) {
+      ObjectMapper objectMapper, PromptManager promptManager) {
     mainClient = OpenAiClient.builder()
         .openAiApiKey(mainKey)
         .callTimeout(Duration.ofSeconds(timeout))
@@ -39,6 +41,7 @@ public class GptService {
         .callTimeout(Duration.ofSeconds(timeout))
         .build();
     this.objectMapper = objectMapper;
+    this.promptManager = promptManager;
   }
 
   public String ask(ChatCompletionRequest request) {
@@ -72,6 +75,7 @@ public class GptService {
 
   public ChatCompletionRequest.Builder request() {
     return ChatCompletionRequest.builder()
-        .model(Model.GPT_3_5_TURBO);
+        .model(Model.GPT_3_5_TURBO)
+        .addSystemMessage(promptManager.getGlobal());
   }
 }
