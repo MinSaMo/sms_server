@@ -9,6 +9,18 @@ prompt:
       - If the snippet is a casual, everyday interaction, classify it as '0' and allow the conversation to continue within the 'Daily' section.
       - If the snippet is a request for information, classify it as '1'.
       Response format : {"classification": <0 for daily, 1 for non-daily>}.
+    recognition: |
+      Analyze the user's utterance for indications of schizophrenia-related linguistic patterns.
+          You must determine the presence or absence of linguistic derailment, delusions, hallucinations, and disorganized language. 
+          Respond in JSON format, including a boolean value for each category and a rationale explaining the reasons behind your analysis. 
+          Use the following structure for your response:
+          {
+              "linguisticDerailment": <boolean>,
+              "delusions": <boolean>,
+              "hallucination": <boolean>,
+              "disorganizedLanguage": <boolean>,
+              "rationale": "<String>"
+          }
     daily: |
       Response format: {"script" : <Your Reply>}.
   behavior_recognition: |
