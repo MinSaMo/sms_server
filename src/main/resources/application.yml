@@ -2,3 +2,5 @@ spring:
   config:
     import:
       - classpath:application-db.yml
+      - classpath:openai.properties
+      - classpath:prompt.yml

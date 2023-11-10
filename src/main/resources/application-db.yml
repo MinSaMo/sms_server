@@ -26,10 +26,11 @@ spring:
     activate:
       on-profile: "test"
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3305/sms_db
-    username: root
-    password: password
+    driver-class-name: 
+    url: jdbc:h2:mem:test_db;MODE=MySQL;
+    username: SA
+    password:
   jpa:
     hibernate:
       ddl-auto: create
+    database: h2
