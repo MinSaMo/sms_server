@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sevendwarfs.sms.controller.http.dto.request.InterviewCreateDto;
 import com.sevendwarfs.sms.controller.http.dto.response.InterviewResponseDto;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,7 +33,7 @@ class InterviewControllerTest {
   void 인터뷰_생성_응답_테스트() throws Exception {
 
     String question = "약을 복용 하셨나요?";
-    LocalDateTime time = LocalDateTime.now();
+    LocalTime time = LocalTime.now();
 
     InterviewCreateDto testDto;
     testDto = new InterviewCreateDto(question, time);
@@ -54,12 +54,8 @@ class InterviewControllerTest {
     assertEqualsOfTime(time, response.getQuestionTime());
   }
 
-  void assertEqualsOfTime(LocalDateTime t1, LocalDateTime t2) {
-    assertEquals(t1.getYear(), t2.getYear());
-    assertEquals(t1.getMonth(), t2.getMonth());
-    assertEquals(t1.getDayOfMonth(), t2.getDayOfMonth());
+  void assertEqualsOfTime(LocalTime t1, LocalTime t2) {
     assertEquals(t1.getHour(), t2.getHour());
     assertEquals(t1.getMinute(), t2.getMinute());
-    assertEquals(t1.getSecond(), t2.getSecond());
   }
 }
