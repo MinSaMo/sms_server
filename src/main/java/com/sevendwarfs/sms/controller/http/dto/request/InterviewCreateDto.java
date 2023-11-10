@@ -1,8 +1,8 @@
 package com.sevendwarfs.sms.controller.http.dto.request;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public record InterviewCreateDto(
     String question,
-    LocalDateTime time
+    LocalTime time
 ) {}
