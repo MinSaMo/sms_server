@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.sevendwarfs.sms.domain.Message;
 import com.sevendwarfs.sms.domain.MessageRepository;
+import com.sevendwarfs.sms.domain.OddMessage;
+import com.sevendwarfs.sms.domain.OddMessageRepository;
+import com.sevendwarfs.sms.service.dto.gpt.MessageRecognitionDto;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +24,8 @@ class MessageServiceTest {
 
   @Autowired
   MessageRepository messageRepository;
+  @Autowired
+  OddMessageRepository oddMessageRepository;
 
   @Autowired
   DialogService dialogService;
@@ -60,6 +65,29 @@ class MessageServiceTest {
     assertEquals(message.getSender(), Message.ASSISTANT);
     assertEquals(message.getContent(), script);
     assertEquals(message.getDialog().getId(), dialogId);
+  }
+
+  @Test
+  @Transactional
+  void 이상발화_메시지_생성_테스트() {
+    String script = "i'm user";
+    Long messageId = messageService.createAssistantMessage(script);
+
+    MessageRecognitionDto recognition = new MessageRecognitionDto(true, true, true, true,
+        "it's test");
+
+    Long oddMessageId = messageService.createOddMessage(messageId, recognition);
+
+    Optional<OddMessage> optionalOddMessage = oddMessageRepository.findById(oddMessageId);
+    assertTrue(optionalOddMessage.isPresent());
+    OddMessage oddMessage = optionalOddMessage.get();
+
+    assertEquals(oddMessage.getMessage().getId(), messageId);
+    assertEquals(oddMessage.getReason(), recognition.rationale());
+    assertEquals(oddMessage.getIsDelusions(), recognition.delusions());
+    assertEquals(oddMessage.getIsHallucination(), recognition.hallucination());
+    assertEquals(oddMessage.getIsDisorganized(), recognition.disorganizedLanguage());
+    assertEquals(oddMessage.getIsLinguisticDerailment(), recognition.linguisticDerailment());
   }
 
 }
