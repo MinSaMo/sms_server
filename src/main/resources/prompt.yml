@@ -30,3 +30,6 @@ prompt:
                 "evidence": "Individual laughed hysterically at a somber event."
         }
     Use the above format to respond to scenarios where bizarre behavior is observed.
+  dialog_summarize: |
+    Summarize the conversations you had with the Previous Summary and User within five lines.
+    Reply in the JSON form {summary:"<String>"}.
