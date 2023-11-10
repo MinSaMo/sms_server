@@ -22,9 +22,12 @@ public class ChatService {
   private final MessageService messageService;
 
   public MessageClassification classifyMessage(String message) {
+    Prompt prompt = promptManager.getClassifyMessage();
     ChatCompletionRequest request = gptService.request()
-        .addSystemMessage(promptManager.getClassifyMessage())
+        .addSystemMessage(prompt.getScript())
         .addUserMessage(message)
+        .topP(prompt.getTopP())
+        .temperature(prompt.getTemperature())
         .build();
     MessageClassificationDto response = gptService.ask(request, MessageClassificationDto.class);
     MessageClassification classification = MessageClassification.of(
@@ -34,10 +37,14 @@ public class ChatService {
   }
 
   public String replyToMessage(String message) {
+    Prompt prompt = promptManager.getDaily();
     ChatCompletionRequest request = gptService.request()
-        .addSystemMessage(promptManager.getDaily())
+        .addSystemMessage(prompt.getScript())
         .addUserMessage(message)
+        .topP(prompt.getTopP())
+        .temperature(prompt.getTemperature())
         .build();
+
     MessageResponseDto response = gptService.ask(request, MessageResponseDto.class);
     log.info("message={}, response={}", message, response.script());
     return response.script();
@@ -47,9 +54,12 @@ public class ChatService {
   public Optional<Long> recognizeMessage(Long messageId) {
     Message message = messageService.findById(messageId);
 
+    Prompt prompt = promptManager.getRecognitionMessage();
     ChatCompletionRequest request = gptService.request()
-        .addSystemMessage(promptManager.getRecognitionMessage())
+        .addSystemMessage(prompt.getScript())
         .addUserMessage(message.getContent())
+        .topP(prompt.getTopP())
+        .temperature(prompt.getTemperature())
         .build();
 
     MessageRecognitionDto response = gptService.ask(request, MessageRecognitionDto.class);

@@ -32,10 +32,14 @@ public class InterviewService {
   @Transactional
   public String generateInterviewScript(Long interviewId) {
     Interview interview = findById(interviewId);
+    Prompt prompt = promptManager.getNurseInterview();
     ChatCompletionRequest request = gptService.request()
-        .addSystemMessage(promptManager.getNurseInterview())
+        .addSystemMessage(prompt.getScript())
         .addUserMessage(interview.getQuestion())
+        .topP(prompt.getTopP())
+        .temperature(prompt.getTemperature())
         .build();
+
     NurseInterviewResponseDto response = gptService.ask(request, NurseInterviewResponseDto.class);
     return response.script();
   }

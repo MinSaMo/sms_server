@@ -48,11 +48,14 @@ public class DialogService {
   }
 
   public void summarizeDialog() {
+    Prompt prompt = promptManager.getSummarizeDialog();
     ChatCompletionRequest request = addCurrentDialog(
         gptService
             .request()
             .addUserMessage(previousSummarization()))
-        .addSystemMessage(promptManager.getSummarizeDialog())
+        .addSystemMessage(prompt.getScript())
+        .topP(prompt.getTopP())
+        .temperature(prompt.getTemperature())
         .build();
     SummarizeResponseDto response = gptService.ask(request, SummarizeResponseDto.class);
     recentSummary = response.summary();

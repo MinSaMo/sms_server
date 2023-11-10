@@ -2,6 +2,7 @@ package com.sevendwarfs.sms.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sevendwarfs.sms.global.exception.GptRemoteServerError;
 import dev.ai4j.openai4j.Model;
 import dev.ai4j.openai4j.OpenAiClient;
 import dev.ai4j.openai4j.chat.ChatCompletionRequest;
@@ -57,7 +58,11 @@ public class GptService {
 
   protected ChatCompletionResponse executeOpenAI(OpenAiClient client,
       ChatCompletionRequest request) {
-    return client.chatCompletion(request).execute();
+    try {
+      return client.chatCompletion(request).execute();
+    } catch (Exception e) {
+      throw GptRemoteServerError.NOT_STABLE;
+    }
   }
 
   public <T> T ask(ChatCompletionRequest request, Class<T> clazz) {
@@ -76,6 +81,6 @@ public class GptService {
   public ChatCompletionRequest.Builder request() {
     return ChatCompletionRequest.builder()
         .model(Model.GPT_3_5_TURBO)
-        .addSystemMessage(promptManager.getGlobal());
+        .addSystemMessage(promptManager.getGlobal().getScript());
   }
 }

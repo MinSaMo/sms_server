@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 @Getter
 public class PromptManager {
 
-  private final String classifyMessage;
-  private final String global;
-  private final String daily;
-  private final String recognitionBehavior;
-  private final String recognitionMessage;
-  private final String summarizeDialog;
-  private final String nurseInterview;
+  private final Prompt classifyMessage;
+  private final Prompt global;
+  private final Prompt daily;
+  private final Prompt recognitionBehavior;
+  private final Prompt recognitionMessage;
+  private final Prompt summarizeDialog;
+  private final Prompt nurseInterview;
 
   @Autowired
   public PromptManager(
@@ -26,12 +26,40 @@ public class PromptManager {
       @Value("${prompt.message.recognition}") String recognitionMessage,
       @Value("${prompt.dialog_summarize}") String summarizeDialog,
       @Value("${prompt.nurse_interview}") String nurseInterview) {
-    this.global = global;
-    this.classifyMessage = messageClassify;
-    this.daily = daily;
-    this.recognitionBehavior = recognitionBehavior;
-    this.recognitionMessage = recognitionMessage;
-    this.summarizeDialog = summarizeDialog;
-    this.nurseInterview = nurseInterview;
+    this.global = Prompt.builder()
+        .prompt(global)
+        .topP(null)
+        .temperature(null)
+        .build();
+    this.classifyMessage = Prompt.builder()
+        .prompt(messageClassify)
+        .topP(0.1)
+        .temperature(0.2)
+        .build();
+    this.daily = Prompt.builder()
+        .prompt(daily)
+        .topP(0.3)
+        .temperature(0.4)
+        .build();
+    this.recognitionBehavior = Prompt.builder()
+        .prompt(recognitionBehavior)
+        .topP(0.5)
+        .temperature(0.3)
+        .build();
+    this.recognitionMessage = Prompt.builder()
+        .prompt(recognitionMessage)
+        .topP(0.5)
+        .temperature(0.3)
+        .build();
+    this.summarizeDialog = Prompt.builder()
+        .prompt(summarizeDialog)
+        .topP(0.5)
+        .temperature(0.3)
+        .build();
+    this.nurseInterview = Prompt.builder()
+        .prompt(nurseInterview)
+        .topP(0.5)
+        .temperature(0.3)
+        .build();
   }
 }
