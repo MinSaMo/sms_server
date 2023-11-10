@@ -3,8 +3,8 @@ package com.sevendwarfs.sms.service;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.sevendwarfs.sms.global.exception.GptRemoteServerError;
 import dev.ai4j.openai4j.OpenAiClient;
-import dev.ai4j.openai4j.OpenAiHttpException;
 import dev.ai4j.openai4j.chat.ChatCompletionRequest;
 import dev.ai4j.openai4j.chat.ChatCompletionResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ class GptServiceTest {
     ChatCompletionResponse response;
     try {
       response = gptService.executeOpenAI(client, request);
-    } catch (OpenAiHttpException e) {
+    } catch (GptRemoteServerError e) {
       isApiExceptionOccur = true;
       return null;
     }
@@ -52,7 +52,7 @@ class GptServiceTest {
   <T> T executeAsk(ChatCompletionRequest request, Class<T> clazz) {
     try {
       return gptService.ask(request, clazz);
-    } catch (OpenAiHttpException e) {
+    } catch (GptRemoteServerError e) {
       isApiExceptionOccur = true;
       return null;
     }

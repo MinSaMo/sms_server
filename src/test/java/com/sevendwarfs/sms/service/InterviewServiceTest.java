@@ -9,6 +9,7 @@ import com.sevendwarfs.sms.controller.http.dto.request.InterviewCreateDto;
 import com.sevendwarfs.sms.controller.http.dto.response.InterviewResponseDto;
 import com.sevendwarfs.sms.domain.Interview;
 import com.sevendwarfs.sms.domain.InterviewRepository;
+import com.sevendwarfs.sms.global.exception.GptRemoteServerError;
 import java.time.LocalTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,16 +59,20 @@ class InterviewServiceTest {
   @Test
   @Transactional
   void 인터뷰_질문_생성_테스트() {
-    String question = "소염제 복용 확인";
-    LocalTime time = LocalTime.now();
+    try {
+      String question = "소염제 복용 확인";
+      LocalTime time = LocalTime.now();
 
-    InterviewResponseDto saved = interviewService.createInterview(
-        new InterviewCreateDto(question, time));
+      InterviewResponseDto saved = interviewService.createInterview(
+          new InterviewCreateDto(question, time));
 
-    Long interviewId = saved.getId();
+      Long interviewId = saved.getId();
 
-    String response = interviewService.generateInterviewScript(interviewId);
-    assertFalse(response.isEmpty());
+      String response = interviewService.generateInterviewScript(interviewId);
+      assertFalse(response.isEmpty());
+    } catch (GptRemoteServerError error) {
+      return;
+    }
   }
 
   boolean isEqualTime(LocalTime t1, LocalTime t2) {

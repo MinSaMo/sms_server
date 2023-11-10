@@ -7,6 +7,7 @@ import com.sevendwarfs.sms.domain.Behavior;
 import com.sevendwarfs.sms.domain.BehaviorRepository;
 import com.sevendwarfs.sms.domain.OddBehavior;
 import com.sevendwarfs.sms.domain.OddBehaviorRepository;
+import com.sevendwarfs.sms.global.exception.GptRemoteServerError;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,13 +39,18 @@ class BehaviorServiceTest {
   @Transactional
   void 이상행동_감지_테스트_정상케이스() {
     String caption = "A main sitting down on a chair";
-    behaviorService.recognitionBehavior(caption);
-
+    try {
+      behaviorService.recognitionBehavior(caption);
+    } catch (GptRemoteServerError e) {
+      return;
+    }
     Optional<Behavior> optionalBehavior = behaviorRepository.findByCaption(caption);
+
     assertTrue(optionalBehavior.isPresent());
 
     Behavior behavior = optionalBehavior.get();
-    Optional<OddBehavior> optionalOddBehavior = oddBehaviorRepository.findByBehaviorId(behavior.getId());
+    Optional<OddBehavior> optionalOddBehavior = oddBehaviorRepository.findByBehaviorId(
+        behavior.getId());
     assertFalse(optionalOddBehavior.isPresent());
   }
 
@@ -52,13 +58,18 @@ class BehaviorServiceTest {
   @Transactional
   void 이상행동_감지_테스트_비정상케이스() {
     String caption = "A person is seen laughing hysterically at a somber event without any apparent trigger.";
-    behaviorService.recognitionBehavior(caption);
+    try {
+      behaviorService.recognitionBehavior(caption);
+    } catch (GptRemoteServerError e) {
+      return;
+    }
 
     Optional<Behavior> optionalBehavior = behaviorRepository.findByCaption(caption);
     assertTrue(optionalBehavior.isPresent());
 
     Behavior behavior = optionalBehavior.get();
-    Optional<OddBehavior> optionalOddBehavior = oddBehaviorRepository.findByBehaviorId(behavior.getId());
+    Optional<OddBehavior> optionalOddBehavior = oddBehaviorRepository.findByBehaviorId(
+        behavior.getId());
     assertTrue(optionalOddBehavior.isPresent());
   }
 }
