@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 
@@ -24,4 +25,17 @@ public class Dialog {
 
   @OneToMany(mappedBy = "dialog")
   private List<Message> messageList;
+
+  public Dialog() {
+    this.messageList = new ArrayList<>();
+    timestamp = LocalDateTime.now();
+  }
+
+  @Override
+  public String toString() {
+    return "Dialog{" +
+        "id=" + id +
+        "messageSize=" + messageList.size() +
+        '}';
+  }
 }

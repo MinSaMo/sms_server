@@ -2,7 +2,7 @@ package com.sevendwarfs.sms.controller.http.dto.response;
 
 import com.sevendwarfs.sms.controller.http.dto.request.InterviewCreateDto;
 import com.sevendwarfs.sms.domain.Interview;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,10 +14,10 @@ public class InterviewResponseDto {
 
   private Long id;
   private String question;
-  private LocalDateTime questionTime;
+  private LocalTime questionTime;
 
   @Builder
-  public InterviewResponseDto(Long id, String question, LocalDateTime questionTime) {
+  public InterviewResponseDto(Long id, String question, LocalTime questionTime) {
     this.id = id;
     this.question = question;
     this.questionTime = questionTime;

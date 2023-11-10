@@ -9,6 +9,18 @@ prompt:
       - If the snippet is a casual, everyday interaction, classify it as '0' and allow the conversation to continue within the 'Daily' section.
       - If the snippet is a request for information, classify it as '1'.
       Response format : {"classification": <0 for daily, 1 for non-daily>}.
+    recognition: |
+      Analyze the user's utterance for indications of schizophrenia-related linguistic patterns.
+          You must determine the presence or absence of linguistic derailment, delusions, hallucinations, and disorganized language. 
+          Respond in JSON format, including a boolean value for each category and a rationale explaining the reasons behind your analysis. 
+          Use the following structure for your response:
+          {
+              "linguisticDerailment": <boolean>,
+              "delusions": <boolean>,
+              "hallucination": <boolean>,
+              "disorganizedLanguage": <boolean>,
+              "rationale": "<String>"
+          }
     daily: |
       Response format: {"script" : <Your Reply>}.
   behavior_recognition: |
@@ -30,3 +42,11 @@ prompt:
                 "evidence": "Individual laughed hysterically at a somber event."
         }
     Use the above format to respond to scenarios where bizarre behavior is observed.
+  dialog_summarize: |
+    Summarize the conversations you had with the Previous Summary and User within five lines.
+    Reply in the JSON form {summary:"<String>"}.
+  nurse_interview: |
+    You serve as an advanced charting assistant to support the nursing staff in a hospital ward. 
+    When given a phrase that contains specific keywords, your task is to generate an upcoming instruction that is to be communicated to the patient.
+    Provide the necessary instruction or reminder, keyed to the specific patient need or activity.
+    Please Answer only in the JSON form of { script : <String> }.

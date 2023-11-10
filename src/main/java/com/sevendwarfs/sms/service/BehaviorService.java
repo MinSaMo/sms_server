@@ -29,9 +29,12 @@ public class BehaviorService {
         .build());
 
     log.info("behavior={}", behavior);
+    Prompt prompt = promptManager.getRecognitionBehavior();
     ChatCompletionRequest request = gptService.request()
-        .addSystemMessage(promptManager.getRecognitionBehavior())
+        .addSystemMessage(prompt.getScript())
         .addUserMessage(caption)
+        .topP(prompt.getTopP())
+        .temperature(prompt.getTemperature())
         .build();
 
     BehaviorRecognitionDto response = gptService.ask(request, BehaviorRecognitionDto.class);
