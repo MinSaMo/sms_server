@@ -9,7 +9,6 @@ import com.sevendwarfs.sms.domain.OddBehavior;
 import com.sevendwarfs.sms.domain.OddBehaviorRepository;
 import com.sevendwarfs.sms.global.exception.GptRemoteServerError;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,18 +28,14 @@ class BehaviorServiceTest {
   OddBehaviorRepository oddBehaviorRepository;
 
 
-  @BeforeEach
-  void beforeEach() {
-    behaviorRepository.deleteAll();
-    oddBehaviorRepository.deleteAll();
-  }
+  Long videoId = 1L;
 
   @Test
   @Transactional
   void 이상행동_감지_테스트_정상케이스() {
     String caption = "A main sitting down on a chair";
     try {
-      behaviorService.recognitionBehavior(caption);
+      behaviorService.recognitionBehavior(caption, videoId);
     } catch (GptRemoteServerError e) {
       return;
     }
@@ -59,7 +54,7 @@ class BehaviorServiceTest {
   void 이상행동_감지_테스트_비정상케이스() {
     String caption = "A person is seen laughing hysterically at a somber event without any apparent trigger.";
     try {
-      behaviorService.recognitionBehavior(caption);
+      behaviorService.recognitionBehavior(caption, videoId);
     } catch (GptRemoteServerError e) {
       return;
     }
@@ -71,5 +66,17 @@ class BehaviorServiceTest {
     Optional<OddBehavior> optionalOddBehavior = oddBehaviorRepository.findByBehaviorId(
         behavior.getId());
     assertTrue(optionalOddBehavior.isPresent());
+  }
+
+  @Test
+  @Transactional
+  void 이상행동_삭제_테스트() {
+    Behavior behavior = behaviorService.createBehavior("test");
+    OddBehavior odd = behaviorService.createOddBehavior(behavior, "reason", 1L);
+    Long id = behavior.getId();
+    behaviorService.deleteOddBehavior(id);
+
+    Optional<OddBehavior> optionalOddBehavior = oddBehaviorRepository.findByBehaviorId(id);
+    assertTrue(optionalOddBehavior.isEmpty());
   }
 }

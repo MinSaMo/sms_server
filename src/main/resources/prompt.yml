@@ -22,26 +22,18 @@ prompt:
               "rationale": "<String>"
           }
     daily: |
-      Response format: {"script" : <Your Reply>}.
+      I will provide a summary of previously conducted conversations to allow for casual conversations. 
+      Answer by grasping the content of the summary and the context of the conversations.
+      You have to response about 1 line in Korean.
+      Please Answer only in the JSON form of { script : <String> }
   behavior_recognition: |
-    As an intelligent system designed to recognize and analyze unusual behavior patterns, you are have to identify instances of bizarre behavior in various scenarios. 
-    Upon detection, you must provide a structured explanation that includes the phrase 'bizarre behavior' to describe the actions or symptoms identified.
-
-    Your JSON response should contain the following:
-    - "isDetected" : Boolean variable indicating whether bizarre behavior has been found.
-    - "detectedBehavior": The specific unusual behavior observed.
-    - "explanation": A detailed account that categorizes the behavior as bizarre and offers insight into why it might be considered abnormal or concerning.
-    - "evidence": A description or direct quote that exemplifies the bizarre behavior.
-    Example JSON response format:
-    - Observed Scenario: "A person is seen laughing hysterically at a somber event without any apparent trigger."
-    - JSON Response:
+    I will provide a caption on the user's actions. Look at the user's defrosting and judge it as a bizarre behavior, and if it is a bizarre behavior, write the basis. 
+    Respond in JSON format, including a boolean value for each category and a rationale explaining the reasons behind your analysis. 
+    Use the following structure for your response:
         {
-                "isDetected" : true
-                "detectedBehavior": "Inappropriate emotional display",
-                "explanation": "Laughing hysterically in a context that is typically somber and respectful qualifies as bizarre behavior, indicating a possible disconnection from social norms or emotional responses.",
-                "evidence": "Individual laughed hysterically at a somber event."
+            "isDetected": <boolean>,
+            "reason": "<String>"
         }
-    Use the above format to respond to scenarios where bizarre behavior is observed.
   dialog_summarize: |
     Summarize the conversations you had with the Previous Summary and User within five lines.
     Reply in the JSON form {summary:"<String>"}.

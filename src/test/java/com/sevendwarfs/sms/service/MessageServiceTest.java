@@ -1,6 +1,7 @@
 package com.sevendwarfs.sms.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sevendwarfs.sms.domain.Message;
 import com.sevendwarfs.sms.domain.MessageRepository;
@@ -8,7 +9,6 @@ import com.sevendwarfs.sms.domain.OddMessage;
 import com.sevendwarfs.sms.domain.OddMessageRepository;
 import com.sevendwarfs.sms.service.dto.gpt.MessageRecognitionDto;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,11 +29,6 @@ class MessageServiceTest {
 
   @Autowired
   DialogService dialogService;
-
-  @BeforeEach
-  void beforeEach() {
-    messageRepository.deleteAll();
-  }
 
   @Test
   @Transactional
@@ -90,4 +85,16 @@ class MessageServiceTest {
     assertEquals(oddMessage.getIsLinguisticDerailment(), recognition.linguisticDerailment());
   }
 
+  @Test
+  @Transactional
+  void 이상발화_삭제_테스트() {
+    Long userMessage = messageService.createUserMessage("test");
+    Long oddMessage = messageService.createOddMessage(userMessage,
+        new MessageRecognitionDto(true, true, true, true, "test"));
+
+    messageService.deleteOddMessage(userMessage);
+
+    Optional<OddMessage> optionalOddMessage = oddMessageRepository.findByMessageId(userMessage);
+    assertTrue(optionalOddMessage.isEmpty());
+  }
 }

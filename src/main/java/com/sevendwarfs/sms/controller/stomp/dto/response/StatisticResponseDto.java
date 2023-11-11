@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 public class StatisticResponseDto {
 
   private int month;
-  private Map<Integer, WeeklyStatisticResponseDto> weeks;
+  private Map<Integer, WeeklyStatisticResponseDto> weeklyData;
   private LocalDateTime timestamp;
 
   @Builder
-  public StatisticResponseDto(int month, Map<Integer, WeeklyStatisticResponseDto> weeks) {
+  public StatisticResponseDto(int month, Map<Integer, WeeklyStatisticResponseDto> weeklyData) {
     this.month = month;
-    this.weeks = weeks;
+    this.weeklyData = weeklyData;
     timestamp = LocalDateTime.now();
   }
 
@@ -31,7 +31,7 @@ public class StatisticResponseDto {
     }
     return StatisticResponseDto.builder()
         .month(9)
-        .weeks(map)
+        .weeklyData(map)
         .build();
   }
 

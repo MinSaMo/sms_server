@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Entity(name = "behaviors")
@@ -23,12 +24,14 @@ public class Behavior {
   @Column(name = "bhv_captino")
   private String caption;
 
+  @Setter
   @Column(name = "bhv_timestamp")
   private LocalDateTime timestamp;
 
   @Builder
   public Behavior(String caption) {
     this.caption = caption;
+    timestamp = LocalDateTime.now();
   }
 
   @Override

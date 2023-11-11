@@ -2,10 +2,17 @@ package com.sevendwarfs.sms.service;
 
 import com.sevendwarfs.sms.controller.http.dto.request.InterviewCreateDto;
 import com.sevendwarfs.sms.controller.http.dto.response.InterviewResponseDto;
+import com.sevendwarfs.sms.controller.stomp.MessagePublisher;
 import com.sevendwarfs.sms.domain.Interview;
+import com.sevendwarfs.sms.domain.InterviewLog;
+import com.sevendwarfs.sms.domain.InterviewLogRepository;
 import com.sevendwarfs.sms.domain.InterviewRepository;
 import com.sevendwarfs.sms.service.dto.gpt.NurseInterviewResponseDto;
 import dev.ai4j.openai4j.chat.ChatCompletionRequest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,8 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class InterviewService {
 
   private final InterviewRepository interviewRepository;
+  private final InterviewLogRepository interviewLogRepository;
   private final GptService gptService;
   private final PromptManager promptManager;
+  private final InterviewScheduler scheduler;
+  private final MessagePublisher messagePublisher;
 
   @Transactional
   public InterviewResponseDto createInterview(InterviewCreateDto dto) {
@@ -27,6 +37,30 @@ public class InterviewService {
         .questionTime(dto.time())
         .build());
     return InterviewResponseDto.of(interview);
+  }
+
+  @Transactional
+  public void scheduleInterview(Long interviewId) {
+    Interview interview = findById(interviewId);
+    scheduler.scheduleTask(() -> {
+      String question = generateInterviewScript(interviewId);
+      messagePublisher.sendMessage(question);
+      saveInterviewLog(interview);
+    },interview.getQuestionTime());
+  }
+
+  @Transactional
+  public List<InterviewResponseDto> findAll() {
+    return interviewRepository.findAll().stream()
+        .map(InterviewResponseDto::of)
+        .collect(Collectors.toList());
+  }
+
+  @Transactional
+  public void saveInterviewLog(Interview interview) {
+    interviewLogRepository.save(InterviewLog.builder()
+        .interview(interview)
+        .build());
   }
 
   @Transactional
@@ -40,7 +74,7 @@ public class InterviewService {
         .temperature(prompt.getTemperature())
         .build();
 
-    NurseInterviewResponseDto response = gptService.ask(request, NurseInterviewResponseDto.class);
+    NurseInterviewResponseDto response = gptService.askToSub(request, NurseInterviewResponseDto.class);
     return response.script();
   }
 
@@ -48,5 +82,22 @@ public class InterviewService {
   public Interview findById(Long interviewId) {
     return interviewRepository.findById(interviewId)
         .orElseThrow(() -> new RuntimeException("Not found Interview"));
+  }
+
+  @Transactional
+  public List<InterviewLog> findTodayLog() {
+    LocalDateTime start = startOfDay();
+    LocalDateTime end = endOfDay();
+    return interviewLogRepository.findByTimestampBetween(start, end);
+  }
+
+  protected LocalDateTime startOfDay() {
+    LocalDate now = LocalDate.now();
+    return LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 0, 0, 0);
+  }
+
+  protected LocalDateTime endOfDay() {
+    LocalDate now = LocalDate.now();
+    return LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 23, 59, 59);
   }
 }

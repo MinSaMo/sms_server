@@ -35,7 +35,7 @@ public class Dialog {
   public String toString() {
     return "Dialog{" +
         "id=" + id +
-        "messageSize=" + messageList.size() +
+        ",messageSize=" + messageList.size() +
         '}';
   }
 }

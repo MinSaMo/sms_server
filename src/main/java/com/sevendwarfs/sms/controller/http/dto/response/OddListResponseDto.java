@@ -3,6 +3,7 @@ package com.sevendwarfs.sms.controller.http.dto.response;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,11 @@ import lombok.Setter;
 public class OddListResponseDto {
 
   private List<OddItemResponseDto> logs;
+
+  @Builder
+  public OddListResponseDto(List<OddItemResponseDto> logs) {
+    this.logs = logs;
+  }
 
   public static OddListResponseDto mock() {
     OddListResponseDto res = new OddListResponseDto();
