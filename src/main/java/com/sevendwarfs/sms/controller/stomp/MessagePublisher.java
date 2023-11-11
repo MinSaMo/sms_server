@@ -1,5 +1,6 @@
 package com.sevendwarfs.sms.controller.stomp;
 
+import com.sevendwarfs.sms.controller.stomp.dto.response.ChatResponseDto;
 import com.sevendwarfs.sms.controller.stomp.dto.response.StatisticResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -17,6 +18,12 @@ public class MessagePublisher {
 
   public void sendStatistic(StatisticResponseDto res) {
     send("/topic/statistic", res);
+  }
+
+  public void sendMessage(String message) {
+    send("/topic/chat", ChatResponseDto.builder()
+        .script(message)
+        .build());
   }
 
   public void statisticMock() {

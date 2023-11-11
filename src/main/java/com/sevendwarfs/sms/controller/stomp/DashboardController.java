@@ -43,7 +43,6 @@ public class DashboardController {
     if (classification.equals(MessageClassification.NOT_SUPPORTED)) {
       replyId = messageService.createAssistantMessage(NOT_SUPPORTED);
       return ChatResponseDto.builder()
-          .id(replyId)
           .script(NOT_SUPPORTED)
           .build();
     }
@@ -61,7 +60,6 @@ public class DashboardController {
     });
 
     return ChatResponseDto.builder()
-        .id(replyId)
         .script(reply)
         .build();
   }
