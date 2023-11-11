@@ -29,6 +29,7 @@ class BehaviorServiceTest {
   OddBehaviorRepository oddBehaviorRepository;
 
 
+  Long videoId = 1L;
   @BeforeEach
   void beforeEach() {
     behaviorRepository.deleteAll();
@@ -40,7 +41,7 @@ class BehaviorServiceTest {
   void 이상행동_감지_테스트_정상케이스() {
     String caption = "A main sitting down on a chair";
     try {
-      behaviorService.recognitionBehavior(caption);
+      behaviorService.recognitionBehavior(caption, videoId);
     } catch (GptRemoteServerError e) {
       return;
     }
@@ -59,7 +60,7 @@ class BehaviorServiceTest {
   void 이상행동_감지_테스트_비정상케이스() {
     String caption = "A person is seen laughing hysterically at a somber event without any apparent trigger.";
     try {
-      behaviorService.recognitionBehavior(caption);
+      behaviorService.recognitionBehavior(caption, videoId);
     } catch (GptRemoteServerError e) {
       return;
     }
