@@ -15,6 +15,10 @@ public class MessagePublisher {
     template.convertAndSend(destination, message);
   }
 
+  public void sendStatistic(StatisticResponseDto res) {
+    send("/topic/statistic", res);
+  }
+
   public void statisticMock() {
     send("/topic/statistic", StatisticResponseDto.mock());
   }

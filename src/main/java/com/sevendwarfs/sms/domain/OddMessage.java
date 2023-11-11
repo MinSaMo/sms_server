@@ -27,15 +27,27 @@ public class OddMessage {
   @Column(name = "oddm_reason")
   private String reason;
 
+  /*
+  언어의 탈선
+   */
   @Column(name = "oddm_ling")
   private Boolean isLinguisticDerailment;
 
+  /*
+  환각
+   */
   @Column(name = "oddm_delu")
   private Boolean isDelusions;
 
+  /*
+  망상
+   */
   @Column(name = "oddm_hallu")
   private Boolean isHallucination;
 
+  /*
+  와해된 언어
+   */
   @Column(name = "oddm_disorganized")
   private Boolean isDisorganized;
 

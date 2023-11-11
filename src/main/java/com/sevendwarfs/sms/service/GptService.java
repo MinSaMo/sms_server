@@ -45,9 +45,9 @@ public class GptService {
     this.promptManager = promptManager;
   }
 
-  public String ask(ChatCompletionRequest request) {
+  public String ask(ChatCompletionRequest request,  OpenAiClient client) {
     log.info("gpt-request-message : {}", request.messages());
-    ChatCompletionResponse response = executeOpenAI(mainClient, request);
+    ChatCompletionResponse response = executeOpenAI(client, request);
     log.info("gpt-response : {}", response);
     return getContent(response);
   }
@@ -66,7 +66,20 @@ public class GptService {
   }
 
   public <T> T ask(ChatCompletionRequest request, Class<T> clazz) {
-    String content = this.ask(request);
+    String content = this.ask(request, mainClient);
+    log.info("response-type : {}", clazz.getName());
+    if (clazz.equals(String.class)) {
+      return clazz.cast(content);
+    }
+    try {
+      return objectMapper.readValue(content, clazz);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public <T> T askToSub(ChatCompletionRequest request, Class<T> clazz) {
+    String content = this.ask(request, subClient);
     log.info("response-type : {}", clazz.getName());
     if (clazz.equals(String.class)) {
       return clazz.cast(content);

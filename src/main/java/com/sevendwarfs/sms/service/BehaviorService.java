@@ -23,10 +23,8 @@ public class BehaviorService {
   private final PromptManager promptManager;
 
   @Transactional
-  public void recognitionBehavior(String caption) {
-    Behavior behavior = behaviorRepository.save(Behavior.builder()
-        .caption(caption)
-        .build());
+  public boolean recognitionBehavior(String caption, Long videoId) {
+    Behavior behavior = createBehavior(caption);
 
     log.info("behavior={}", behavior);
     Prompt prompt = promptManager.getRecognitionBehavior();
@@ -40,12 +38,27 @@ public class BehaviorService {
     BehaviorRecognitionDto response = gptService.ask(request, BehaviorRecognitionDto.class);
     log.info("recognition response={}", response);
     if (isOdd(response)) {
-      OddBehavior oddBehavior = oddBehaviorRepository.save(OddBehavior.builder()
-          .behavior(behavior)
-          .reason(response.evidence())
-          .build());
+      OddBehavior oddBehavior = createOddBehavior(behavior, response.reason(), videoId);
       log.info("oddBehavior={}", oddBehavior);
+      return true;
     }
+    return false;
+  }
+
+  @Transactional
+  public OddBehavior createOddBehavior(Behavior behavior, String reason,Long videoId) {
+    return oddBehaviorRepository.save(OddBehavior.builder()
+        .behavior(behavior)
+        .reason(reason)
+        .videoId(videoId)
+        .build());
+  }
+
+  @Transactional
+  public Behavior createBehavior(String caption) {
+    return behaviorRepository.save(Behavior.builder()
+        .caption(caption)
+        .build());
   }
 
   private boolean isOdd(BehaviorRecognitionDto dto) {

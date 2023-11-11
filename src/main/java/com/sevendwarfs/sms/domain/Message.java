@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Entity(name = "messages")
@@ -31,6 +32,7 @@ public class Message {
   @Column(name = "msg_sender")
   private String sender;
 
+  @Setter
   @Column(name = "msg_timestamp")
   private LocalDateTime timestamp;
 

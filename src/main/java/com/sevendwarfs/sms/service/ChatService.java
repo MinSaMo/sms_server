@@ -20,6 +20,7 @@ public class ChatService {
   private final GptService gptService;
   private final PromptManager promptManager;
   private final MessageService messageService;
+  private final DialogService dialogService;
 
   public MessageClassification classifyMessage(String message) {
     Prompt prompt = promptManager.getClassifyMessage();
@@ -38,8 +39,11 @@ public class ChatService {
 
   public String replyToMessage(String message) {
     Prompt prompt = promptManager.getDaily();
-    ChatCompletionRequest request = gptService.request()
+    String summary = String.format("summary : %s", dialogService.getRecentSummary());
+    ChatCompletionRequest request = dialogService.addCurrentDialog(
+            gptService.request())
         .addSystemMessage(prompt.getScript())
+        .addUserMessage(summary)
         .addUserMessage(message)
         .topP(prompt.getTopP())
         .temperature(prompt.getTemperature())
