@@ -7,34 +7,31 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Entity(name = "odd_behaviors")
 @NoArgsConstructor
-public class OddBehavior {
+@Entity(name = "interview_logs")
+public class InterviewLog {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "oddb_id")
+  @Column(name = "ilog_id")
   private Long id;
 
-  @Column(name = "oddb_reason")
-  private String reason;
-
-  @Column(name = "oddb_video_id")
-  private Long videoId;
+  @Column(name = "ilog_timestamp")
+  private LocalDateTime timestamp;
 
   @ManyToOne
-  @JoinColumn(name = "bhv_id")
-  private Behavior behavior;
+  @JoinColumn(name = "ilog_itv_id")
+  private Interview interview;
 
   @Builder
-  public OddBehavior(String reason, Long videoId, Behavior behavior) {
-    this.reason = reason;
-    this.videoId = videoId;
-    this.behavior = behavior;
+  public InterviewLog(Interview interview) {
+    this.interview = interview;
+    timestamp = LocalDateTime.now();
   }
 }

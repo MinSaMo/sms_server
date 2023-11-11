@@ -2,6 +2,7 @@ package com.sevendwarfs.sms.controller.http.dto.response;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,11 @@ public class ChartResponseDto {
     res.logs.add(ChartItemResponseDto.mock("이상발화", "환각 언어탈선 와해된 언어 증상"));
     res.logs.add(ChartItemResponseDto.mock("이상행동", "기이행동 증상"));
     return res;
+  }
+
+  @Builder
+  public ChartResponseDto(List<ChartItemResponseDto> logs) {
+    this.logs = logs;
   }
 
   @Override

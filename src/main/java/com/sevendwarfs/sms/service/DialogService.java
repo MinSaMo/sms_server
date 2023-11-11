@@ -65,7 +65,7 @@ public class DialogService {
     return String.format("Previous Summary: %s", recentSummary);
   }
 
-  private ChatCompletionRequest.Builder addCurrentDialog(ChatCompletionRequest.Builder builder) {
+  public ChatCompletionRequest.Builder addCurrentDialog(ChatCompletionRequest.Builder builder) {
     for (Message message : currentDialog.getMessageList()) {
       if (message.getSender().equals(Message.USER)) {
         builder.addUserMessage(message.getContent());

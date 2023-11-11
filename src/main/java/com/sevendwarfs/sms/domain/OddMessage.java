@@ -7,7 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,19 +27,31 @@ public class OddMessage {
   @Column(name = "oddm_reason")
   private String reason;
 
+  /*
+  언어의 탈선
+   */
   @Column(name = "oddm_ling")
   private Boolean isLinguisticDerailment;
 
+  /*
+  환각
+   */
   @Column(name = "oddm_delu")
   private Boolean isDelusions;
 
+  /*
+  망상
+   */
   @Column(name = "oddm_hallu")
   private Boolean isHallucination;
 
+  /*
+  와해된 언어
+   */
   @Column(name = "oddm_disorganized")
   private Boolean isDisorganized;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "msg_id")
   private Message message;
 
