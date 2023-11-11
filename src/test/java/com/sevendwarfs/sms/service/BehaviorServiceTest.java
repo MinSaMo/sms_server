@@ -9,7 +9,6 @@ import com.sevendwarfs.sms.domain.OddBehavior;
 import com.sevendwarfs.sms.domain.OddBehaviorRepository;
 import com.sevendwarfs.sms.global.exception.GptRemoteServerError;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,11 +29,6 @@ class BehaviorServiceTest {
 
 
   Long videoId = 1L;
-  @BeforeEach
-  void beforeEach() {
-    behaviorRepository.deleteAll();
-    oddBehaviorRepository.deleteAll();
-  }
 
   @Test
   @Transactional
@@ -72,5 +66,17 @@ class BehaviorServiceTest {
     Optional<OddBehavior> optionalOddBehavior = oddBehaviorRepository.findByBehaviorId(
         behavior.getId());
     assertTrue(optionalOddBehavior.isPresent());
+  }
+
+  @Test
+  @Transactional
+  void 이상행동_삭제_테스트() {
+    Behavior behavior = behaviorService.createBehavior("test");
+    OddBehavior odd = behaviorService.createOddBehavior(behavior, "reason", 1L);
+    Long id = behavior.getId();
+    behaviorService.deleteOddBehavior(id);
+
+    Optional<OddBehavior> optionalOddBehavior = oddBehaviorRepository.findByBehaviorId(id);
+    assertTrue(optionalOddBehavior.isEmpty());
   }
 }

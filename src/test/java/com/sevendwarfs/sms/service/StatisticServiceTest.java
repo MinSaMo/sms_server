@@ -5,14 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.sevendwarfs.sms.controller.stomp.dto.response.StatisticResponseDto;
 import com.sevendwarfs.sms.controller.stomp.dto.response.WeeklyStatisticResponseDto;
 import com.sevendwarfs.sms.domain.Behavior;
+import com.sevendwarfs.sms.domain.BehaviorRepository;
 import com.sevendwarfs.sms.domain.Message;
+import com.sevendwarfs.sms.domain.MessageRepository;
 import com.sevendwarfs.sms.service.dto.gpt.MessageRecognitionDto;
 import java.time.LocalDateTime;
 import java.time.temporal.WeekFields;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.Random;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -32,13 +33,17 @@ class StatisticServiceTest {
   @Autowired
   BehaviorService behaviorService;
 
+  @Autowired
+  MessageRepository messageRepository;
+  @Autowired
+  BehaviorRepository behaviorRepository;
+
   int[] lingCount = {0, 0, 0, 0, 0, 0};
   int[] delCount = {0, 0, 0, 0, 0, 0};
   int[] halCount = {0, 0, 0, 0, 0, 0};
   int[] disCount = {0, 0, 0, 0, 0, 0};
   int[] behaviorCount = {0, 0, 0, 0, 0, 0};
 
-  @Test
   @Transactional
   void 통계_테스트() {
     int T;
@@ -77,6 +82,7 @@ class StatisticServiceTest {
     message.setTimestamp(
         timestamp.with(WeekFields.ISO.weekOfMonth(),
             weekOfMonth));
+    System.out.println(message.getTimestamp());
     // month 변경
     messageService.createOddMessage(msgId, new MessageRecognitionDto(lin, del, hal, dis, "test"));
 
@@ -102,9 +108,11 @@ class StatisticServiceTest {
     LocalDateTime timestamp = behavior.getTimestamp();
     int weekOfMonth = getRandomWeekOfMonth(timestamp.getYear(), timestamp.getMonthValue());
     behavior.setTimestamp(
-        timestamp.with(WeekFields.ISO.weekOfMonth(),
-            weekOfMonth));
+        timestamp
+            .with(WeekFields.ISO.weekOfMonth(), weekOfMonth)
+            .with(WeekFields.ISO.dayOfWeek(), 1));
 
+    System.out.println(behavior.getTimestamp());
     behaviorService.createOddBehavior(behavior, "test", 1L);
     behaviorCount[weekOfMonth]++;
   }
@@ -113,7 +121,7 @@ class StatisticServiceTest {
     Calendar calendar = Calendar.getInstance();
 
     calendar.set(Calendar.YEAR, year);
-    calendar.set(Calendar.MONTH, month - 1); // Calendar의 월은 0부터 시작하므로 1을 빼줍니다
+    calendar.set(Calendar.MONTH, month - 1);
 
     int maxWeeksInMonth = calendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
 
