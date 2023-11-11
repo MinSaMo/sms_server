@@ -5,6 +5,7 @@ import com.sevendwarfs.sms.controller.stomp.dto.request.ChatRequestDto;
 import com.sevendwarfs.sms.controller.stomp.dto.response.BehaviorResponseDto;
 import com.sevendwarfs.sms.controller.stomp.dto.response.ChatResponseDto;
 import com.sevendwarfs.sms.controller.stomp.dto.response.StatisticResponseDto;
+import com.sevendwarfs.sms.global.exception.GptRemoteServerError;
 import com.sevendwarfs.sms.service.BehaviorService;
 import com.sevendwarfs.sms.service.ChatService;
 import com.sevendwarfs.sms.service.MessageService;
@@ -37,31 +38,39 @@ public class DashboardController {
 
     String script = dto.script();
     Long userMessageId = messageService.createUserMessage(script);
-    MessageClassification classification = chatService.classifyMessage(script);
 
-    Long replyId;
-    if (classification.equals(MessageClassification.NOT_SUPPORTED)) {
-      replyId = messageService.createAssistantMessage(NOT_SUPPORTED);
+    try {
+
+      MessageClassification classification = chatService.classifyMessage(script);
+
+      Long replyId;
+      if (classification.equals(MessageClassification.NOT_SUPPORTED)) {
+        replyId = messageService.createAssistantMessage(NOT_SUPPORTED);
+        return ChatResponseDto.builder()
+            .script(NOT_SUPPORTED)
+            .build();
+      }
+
+      String reply = chatService.replyToMessage(script);
+      replyId = messageService.createAssistantMessage(reply);
+
+      startBackgroundJob(() -> {
+        Optional<Long> isOdd = chatService.recognizeMessage(userMessageId);
+        if (isOdd.isPresent()) {
+          StatisticResponseDto statistic = statisticService.getStatistic(
+              LocalDateTime.now().getMonthValue());
+          messagePublisher.sendStatistic(statistic);
+        }
+      });
+
       return ChatResponseDto.builder()
-          .script(NOT_SUPPORTED)
+          .script(reply)
+          .build();
+    } catch (GptRemoteServerError error) {
+      return ChatResponseDto.builder()
+          .script(error.getMessage())
           .build();
     }
-
-    String reply = chatService.replyToMessage(script);
-    replyId = messageService.createAssistantMessage(reply);
-
-    startBackgroundJob(() -> {
-      Optional<Long> isOdd = chatService.recognizeMessage(userMessageId);
-      if (isOdd.isPresent()) {
-        StatisticResponseDto statistic = statisticService.getStatistic(
-            LocalDateTime.now().getMonthValue());
-        messagePublisher.sendStatistic(statistic);
-      }
-    });
-
-    return ChatResponseDto.builder()
-        .script(reply)
-        .build();
   }
 
   @MessageMapping("/caption")
@@ -71,18 +80,23 @@ public class DashboardController {
   ) {
     String caption = dto.caption();
     Long videoId = dto.videoId();
-    boolean isOdd = behaviorService.recognitionBehavior(caption,videoId);
-    if (isOdd) {
-      startBackgroundJob(() -> {
-        StatisticResponseDto statistic = statisticService.getStatistic(
-            LocalDateTime.now().getMonthValue());
-        messagePublisher.sendStatistic(statistic);
-      });
+    try {
+
+      boolean isOdd = behaviorService.recognitionBehavior(caption, videoId);
+      if (isOdd) {
+        startBackgroundJob(() -> {
+          StatisticResponseDto statistic = statisticService.getStatistic(
+              LocalDateTime.now().getMonthValue());
+          messagePublisher.sendStatistic(statistic);
+        });
+      }
+      return BehaviorResponseDto.builder()
+          .caption(caption)
+          .isOdd(isOdd)
+          .build();
+    } catch (GptRemoteServerError error) {
+      return null;
     }
-    return BehaviorResponseDto.builder()
-        .caption(caption)
-        .isOdd(isOdd)
-        .build();
   }
 
   private void startBackgroundJob(Runnable runnable) {

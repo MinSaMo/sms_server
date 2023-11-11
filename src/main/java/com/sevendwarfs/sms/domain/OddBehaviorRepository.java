@@ -9,6 +9,8 @@ public interface OddBehaviorRepository extends JpaRepository<OddBehavior, Long> 
 
   Optional<OddBehavior> findByBehaviorId(Long behaviorId);
 
-  List<OddBehavior> findByBehaviorTimestampBetween(LocalDateTime startOfMonth,
-      LocalDateTime endOfMonth);
+  List<OddBehavior> findByBehaviorTimestampBetween(LocalDateTime start,
+      LocalDateTime end);
+
+  void deleteByBehaviorId(Long behaviorID);
 }

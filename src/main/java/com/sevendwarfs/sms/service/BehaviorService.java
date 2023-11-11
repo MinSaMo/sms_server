@@ -1,11 +1,15 @@
 package com.sevendwarfs.sms.service;
 
+import com.sevendwarfs.sms.controller.http.dto.response.BehaviorDetailResponseDto;
 import com.sevendwarfs.sms.domain.Behavior;
 import com.sevendwarfs.sms.domain.BehaviorRepository;
 import com.sevendwarfs.sms.domain.OddBehavior;
 import com.sevendwarfs.sms.domain.OddBehaviorRepository;
 import com.sevendwarfs.sms.service.dto.gpt.BehaviorRecognitionDto;
 import dev.ai4j.openai4j.chat.ChatCompletionRequest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,7 +39,7 @@ public class BehaviorService {
         .temperature(prompt.getTemperature())
         .build();
 
-    BehaviorRecognitionDto response = gptService.ask(request, BehaviorRecognitionDto.class);
+    BehaviorRecognitionDto response = gptService.askToSub(request, BehaviorRecognitionDto.class);
     log.info("recognition response={}", response);
     if (isOdd(response)) {
       OddBehavior oddBehavior = createOddBehavior(behavior, response.reason(), videoId);
@@ -55,10 +59,57 @@ public class BehaviorService {
   }
 
   @Transactional
+  public void deleteOddBehavior(Long behaviorId) {
+    oddBehaviorRepository.deleteByBehaviorId(behaviorId);
+  }
+
+  @Transactional
   public Behavior createBehavior(String caption) {
     return behaviorRepository.save(Behavior.builder()
         .caption(caption)
         .build());
+  }
+
+  @Transactional
+  public List<OddBehavior> findAllOddBehavior() {
+    return oddBehaviorRepository.findAll();
+  }
+
+  @Transactional
+  public List<OddBehavior> findTodayOddBehavior() {
+    LocalDateTime start = startOfDay();
+    LocalDateTime end = endOfDay();
+    return oddBehaviorRepository.findByBehaviorTimestampBetween(start, end);
+  }
+
+  @Transactional
+  public BehaviorDetailResponseDto getBehaviorDetail(Long behaviorId) {
+    Behavior behavior = findById(behaviorId);
+    OddBehavior oddBehavior = oddBehaviorRepository.findByBehaviorId(behaviorId)
+        .orElseThrow(() -> new RuntimeException("OddBehavior Not found"));
+
+    return BehaviorDetailResponseDto.builder()
+        .behaviorId(behaviorId)
+        .caption(behavior.getCaption())
+        .videoId(oddBehavior.getVideoId())
+        .build();
+  }
+
+  @Transactional
+  public Behavior findById(Long behaviorId) {
+    return behaviorRepository.findById(behaviorId)
+        .orElseThrow(() -> new RuntimeException("Behavior Not found"));
+  }
+
+
+  protected LocalDateTime startOfDay() {
+    LocalDate now = LocalDate.now();
+    return LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 0, 0, 0);
+  }
+
+  protected LocalDateTime endOfDay() {
+    LocalDate now = LocalDate.now();
+    return LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 23, 59, 59);
   }
 
   private boolean isOdd(BehaviorRecognitionDto dto) {

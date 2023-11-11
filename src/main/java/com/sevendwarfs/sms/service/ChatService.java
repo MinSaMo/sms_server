@@ -3,7 +3,7 @@ package com.sevendwarfs.sms.service;
 import com.sevendwarfs.sms.domain.Message;
 import com.sevendwarfs.sms.service.dto.gpt.MessageClassificationDto;
 import com.sevendwarfs.sms.service.dto.gpt.MessageRecognitionDto;
-import com.sevendwarfs.sms.service.dto.gpt.MessageResponseDto;
+import com.sevendwarfs.sms.service.dto.gpt.GptMessageResponseDto;
 import com.sevendwarfs.sms.service.enums.MessageClassification;
 import dev.ai4j.openai4j.chat.ChatCompletionRequest;
 import java.util.Optional;
@@ -49,7 +49,7 @@ public class ChatService {
         .temperature(prompt.getTemperature())
         .build();
 
-    MessageResponseDto response = gptService.ask(request, MessageResponseDto.class);
+    GptMessageResponseDto response = gptService.ask(request, GptMessageResponseDto.class);
     log.info("message={}, response={}", message, response.script());
     return response.script();
   }
@@ -66,7 +66,7 @@ public class ChatService {
         .temperature(prompt.getTemperature())
         .build();
 
-    MessageRecognitionDto response = gptService.ask(request, MessageRecognitionDto.class);
+    MessageRecognitionDto response = gptService.askToSub(request, MessageRecognitionDto.class);
     log.info("recognize message result={}", response);
     if (isOdd(response)) {
       Long oddId = messageService.createOddMessage(messageId, response);
