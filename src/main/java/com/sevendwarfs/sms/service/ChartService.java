@@ -66,8 +66,8 @@ public class ChartService {
 
   @Transactional
   public OddListResponseDto generateOddList() {
-    List<OddMessage> oddMessages = messageService.findAllOddMessage();
-    List<OddBehavior> oddBehaviors = behaviorService.findAllOddBehavior();
+    List<OddMessage> oddMessages = messageService.findOddMessageWeekly();
+    List<OddBehavior> oddBehaviors = behaviorService.findOddBehaviorWeekly();
 
     List<OddItemResponseDto> messageList = oddMessages.stream()
         .map(oddMsg -> {
