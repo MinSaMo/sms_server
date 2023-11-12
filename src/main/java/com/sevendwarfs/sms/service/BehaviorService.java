@@ -7,8 +7,10 @@ import com.sevendwarfs.sms.domain.OddBehavior;
 import com.sevendwarfs.sms.domain.OddBehaviorRepository;
 import com.sevendwarfs.sms.service.dto.gpt.BehaviorRecognitionDto;
 import dev.ai4j.openai4j.chat.ChatCompletionRequest;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,8 +73,8 @@ public class BehaviorService {
   }
 
   @Transactional
-  public List<OddBehavior> findAllOddBehavior() {
-    return oddBehaviorRepository.findAll();
+  public List<OddBehavior> findOddBehaviorWeekly() {
+    return oddBehaviorRepository.findByBehaviorTimestampBetween(startOfWeek(), endOfWeek());
   }
 
   @Transactional
@@ -107,10 +109,22 @@ public class BehaviorService {
     return LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 0, 0, 0);
   }
 
+  protected LocalDateTime startOfWeek() {
+    return LocalDateTime.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).withHour(0)
+        .withMinute(0).withSecond(0).withNano(0);
+  }
+
+
   protected LocalDateTime endOfDay() {
     LocalDate now = LocalDate.now();
     return LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 23, 59, 59);
   }
+
+  protected LocalDateTime endOfWeek() {
+    return LocalDateTime.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY))
+        .withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+  }
+
 
   private boolean isOdd(BehaviorRecognitionDto dto) {
     return dto.isDetected();

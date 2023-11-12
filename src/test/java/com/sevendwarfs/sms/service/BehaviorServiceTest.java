@@ -8,6 +8,8 @@ import com.sevendwarfs.sms.domain.BehaviorRepository;
 import com.sevendwarfs.sms.domain.OddBehavior;
 import com.sevendwarfs.sms.domain.OddBehaviorRepository;
 import com.sevendwarfs.sms.global.exception.GptRemoteServerError;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,5 +80,21 @@ class BehaviorServiceTest {
 
     Optional<OddBehavior> optionalOddBehavior = oddBehaviorRepository.findByBehaviorId(id);
     assertTrue(optionalOddBehavior.isEmpty());
+  }
+
+  @Test
+  @Transactional
+  void 주차별_테스트() {
+    Behavior behavior = behaviorService.createBehavior("test");
+    behavior.setTimestamp(LocalDateTime.now().withDayOfMonth(10));
+    OddBehavior oddBehavior = OddBehavior.builder()
+        .videoId(1L)
+        .behavior(behavior)
+        .reason("test")
+        .build();
+    oddBehaviorRepository.save(oddBehavior);
+
+    List<OddBehavior> list = behaviorService.findOddBehaviorWeekly();
+    assertTrue(list.isEmpty());
   }
 }
