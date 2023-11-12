@@ -7,6 +7,7 @@ import com.sevendwarfs.sms.controller.http.dto.response.OddListResponseDto;
 import com.sevendwarfs.sms.service.BehaviorService;
 import com.sevendwarfs.sms.service.ChartService;
 import com.sevendwarfs.sms.service.MessageService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,18 +24,22 @@ public class ChartController {
   private final MessageService messageService;
   private final BehaviorService behaviorService;
   private final ChartService chartService;
+
+  @Operation(description = "금일 차트 조회 API")
   @GetMapping("/today")
   public ResponseEntity<ChartResponseDto> getChartOfToday() {
     ChartResponseDto response = chartService.generateChart();
     return ResponseEntity.ok().body(response);
   }
 
+  @Operation(description = "이상발화,행동 조회 API")
   @GetMapping("/odd")
   public ResponseEntity<OddListResponseDto> getChartOfOdd() {
     OddListResponseDto response = chartService.generateOddList();
     return ResponseEntity.ok().body(response);
   }
 
+  @Operation(description = "이상발화 상세 대화 내용 조회 API")
   @GetMapping("/message/detail/{messageId}")
   public ResponseEntity<DialogDetailResponseDto> getDialogByMessage(
       @PathVariable Long messageId
@@ -43,6 +48,7 @@ public class ChartController {
     return ResponseEntity.ok().body(response);
   }
 
+  @Operation(description = "이상행동 비디오 id 조회 API")
   @GetMapping("/behavior/detail/{behaviorId}")
   public ResponseEntity<BehaviorDetailResponseDto> getVideoIdByBehavior(
       @PathVariable Long behaviorId
@@ -51,6 +57,7 @@ public class ChartController {
     return ResponseEntity.ok().body(response);
   }
 
+  @Operation(description = "이상행동 삭제 API")
   @DeleteMapping("/behavior/{behaviorId}")
   public ResponseEntity deleteOddBehavior(
       @PathVariable Long behaviorId
@@ -59,6 +66,7 @@ public class ChartController {
     return ResponseEntity.noContent().build();
   }
 
+  @Operation(description = "이상발화 삭제 API")
   @DeleteMapping("/message/{messageId}")
   public ResponseEntity deleteOddMessage(
       @PathVariable Long messageId
