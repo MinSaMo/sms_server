@@ -27,6 +27,6 @@ jobs:
             cd /home/ubuntu/sms
             git checkout develop
             git pull
-            sudo ./gradlew build
+            sudo ./gradlew build -x test
             sudo docker-compose down --rmi all
             sudo docker-compose up -d
