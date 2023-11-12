@@ -3,6 +3,7 @@ package com.sevendwarfs.sms.service;
 import com.sevendwarfs.sms.controller.http.dto.request.InterviewCreateDto;
 import com.sevendwarfs.sms.controller.http.dto.response.InterviewResponseDto;
 import com.sevendwarfs.sms.controller.stomp.MessagePublisher;
+import com.sevendwarfs.sms.controller.stomp.dto.response.ChatResponseDto;
 import com.sevendwarfs.sms.domain.Interview;
 import com.sevendwarfs.sms.domain.InterviewLog;
 import com.sevendwarfs.sms.domain.InterviewLogRepository;
@@ -29,6 +30,7 @@ public class InterviewService {
   private final PromptManager promptManager;
   private final InterviewScheduler scheduler;
   private final MessagePublisher messagePublisher;
+  private final MessageService messageService;
 
   @Transactional
   public InterviewResponseDto createInterview(InterviewCreateDto dto) {
@@ -44,7 +46,8 @@ public class InterviewService {
     Interview interview = findById(interviewId);
     scheduler.scheduleTask(() -> {
       String question = generateInterviewScript(interviewId);
-      messagePublisher.sendMessage(question);
+      Long msgId = messageService.createAssistantMessage(question);
+      messagePublisher.sendMessage(msgId, question, ChatResponseDto.ASSISTANT);
       saveInterviewLog(interview);
     },interview.getQuestionTime());
   }

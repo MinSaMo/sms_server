@@ -1,6 +1,7 @@
 package com.sevendwarfs.sms.controller.stomp;
 
 import com.sevendwarfs.sms.controller.stomp.dto.response.ChatResponseDto;
+import com.sevendwarfs.sms.controller.stomp.dto.response.OddRecognitionResponseDto;
 import com.sevendwarfs.sms.controller.stomp.dto.response.StatisticResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -20,9 +21,17 @@ public class MessagePublisher {
     send("/topic/statistic", res);
   }
 
-  public void sendMessage(String message) {
+  public void sendMessage(Long id, String message,String sender) {
     send("/topic/chat", ChatResponseDto.builder()
+        .id(id)
         .script(message)
+        .sender(sender)
+        .build());
+  }
+
+  public void sendOddMessageDetected(Long id) {
+    send("/topic/odd_detect", OddRecognitionResponseDto.builder()
+        .id(id)
         .build());
   }
 
