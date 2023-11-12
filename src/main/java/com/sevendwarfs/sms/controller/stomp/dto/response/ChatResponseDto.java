@@ -9,20 +9,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatResponseDto {
 
+  private Long id;
+  private String sender;
   private String script;
   private LocalDateTime timestamp;
 
-  @Builder
-  public ChatResponseDto(String script) {
-    this.script = script;
-    timestamp = LocalDateTime.now();
-  }
+  public static final String USER = "user";
+  public static final String ASSISTANT = "assistant";
 
-  public static ChatResponseDto mock(String script) {
-    String reply = String.format("user say : %s", script);
-    return ChatResponseDto.builder()
-        .script(reply)
-        .build();
+  @Builder
+  public ChatResponseDto(Long id, String script, String sender) {
+    this.id = id;
+    this.script = script;
+    this.sender = sender;
+    timestamp = LocalDateTime.now();
   }
 
 }

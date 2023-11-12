@@ -38,6 +38,7 @@ public class DashboardController {
 
     String script = dto.script();
     Long userMessageId = messageService.createUserMessage(script);
+    messagePublisher.sendMessage(userMessageId, script, ChatResponseDto.USER);
 
     try {
 
@@ -47,6 +48,8 @@ public class DashboardController {
       if (classification.equals(MessageClassification.NOT_SUPPORTED)) {
         replyId = messageService.createAssistantMessage(NOT_SUPPORTED);
         return ChatResponseDto.builder()
+            .id(replyId)
+            .sender(ChatResponseDto.ASSISTANT)
             .script(NOT_SUPPORTED)
             .build();
       }
@@ -57,6 +60,8 @@ public class DashboardController {
       startBackgroundJob(() -> {
         Optional<Long> isOdd = chatService.recognizeMessage(userMessageId);
         if (isOdd.isPresent()) {
+          Long id = isOdd.get();
+          messagePublisher.sendOddMessageDetected(id);
           StatisticResponseDto statistic = statisticService.getStatistic(
               LocalDateTime.now().getMonthValue());
           messagePublisher.sendStatistic(statistic);
@@ -65,12 +70,17 @@ public class DashboardController {
 
       return ChatResponseDto.builder()
           .script(reply)
+          .id(replyId)
+          .sender(ChatResponseDto.ASSISTANT)
           .build();
     } catch (GptRemoteServerError error) {
       return ChatResponseDto.builder()
+          .id(-1L)
           .script(error.getMessage())
+          .sender(ChatResponseDto.ASSISTANT)
           .build();
     }
+
   }
 
   @MessageMapping("/caption")
