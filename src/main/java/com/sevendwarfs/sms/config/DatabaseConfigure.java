@@ -7,6 +7,7 @@ import com.sevendwarfs.sms.domain.InterviewRepository;
 import com.sevendwarfs.sms.domain.MessageRepository;
 import com.sevendwarfs.sms.domain.OddBehaviorRepository;
 import com.sevendwarfs.sms.domain.OddMessageRepository;
+import com.sevendwarfs.sms.service.DialogService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +29,14 @@ public class DatabaseConfigure {
   private final InterviewRepository interviewRepository;
   private final InterviewLogRepository interviewLogRepository;
 
+  private final DialogService dialogService;
+
   @PostConstruct
   @Transactional
-
   public void init() {
     deleteEntity();
     createMockData();
+    dialogService.init();
   }
 
   @Transactional
