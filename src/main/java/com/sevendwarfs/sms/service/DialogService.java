@@ -5,7 +5,6 @@ import com.sevendwarfs.sms.domain.DialogRepository;
 import com.sevendwarfs.sms.domain.Message;
 import com.sevendwarfs.sms.service.dto.gpt.SummarizeResponseDto;
 import dev.ai4j.openai4j.chat.ChatCompletionRequest;
-import jakarta.annotation.PostConstruct;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +28,7 @@ public class DialogService {
   @Setter(AccessLevel.PROTECTED)
   private String recentSummary;
 
-  @PostConstruct
-  protected void init() {
+  public void init() {
     saveNewDialog();
     recentSummary = "";
     log.info("init dialog={}", currentDialog);

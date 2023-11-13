@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping(value = "/admin", produces = "application/json; charset=UTF-8")
 @RequiredArgsConstructor
 public class AdminController {
 
