@@ -1,5 +1,6 @@
 package com.sevendwarfs.sms.service;
 
+import com.sevendwarfs.sms.controller.stomp.MessagePublisher;
 import com.sevendwarfs.sms.domain.Message;
 import com.sevendwarfs.sms.service.dto.gpt.MessageClassificationDto;
 import com.sevendwarfs.sms.service.dto.gpt.MessageRecognitionDto;
@@ -21,6 +22,7 @@ public class ChatService {
   private final PromptManager promptManager;
   private final MessageService messageService;
   private final DialogService dialogService;
+  private final MessagePublisher messagePublisher;
 
   public MessageClassification classifyMessage(String message) {
     Prompt prompt = promptManager.getClassifyMessage();
@@ -49,6 +51,7 @@ public class ChatService {
         .temperature(prompt.getTemperature())
         .build();
 
+    messagePublisher.sendPromptLog(message, request.messages());
     GptMessageResponseDto response = gptService.ask(request, GptMessageResponseDto.class);
     log.info("message={}, response={}", message, response.script());
     return response.script();

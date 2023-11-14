@@ -3,7 +3,10 @@ package com.sevendwarfs.sms.controller.stomp;
 import com.sevendwarfs.sms.controller.stomp.dto.response.ChatResponseDto;
 import com.sevendwarfs.sms.controller.stomp.dto.response.MessageClassifyResponseDto;
 import com.sevendwarfs.sms.controller.stomp.dto.response.MessageModifiedResponseDto;
+import com.sevendwarfs.sms.controller.stomp.dto.response.PromptResponseDto;
 import com.sevendwarfs.sms.controller.stomp.dto.response.StatisticResponseDto;
+import dev.ai4j.openai4j.chat.Message;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -42,12 +45,28 @@ public class MessagePublisher {
         .build());
   }
 
+  public void sendPromptLog(String script, List<Message> messages) {
+    StringBuilder prompt = new StringBuilder();
+    for (Message message : messages) {
+      prompt.append(message.role());
+      prompt.append(":");
+      prompt.append(message.content());
+      prompt.append(",");
+    }
+    String promptString = prompt.substring(0, prompt.length() - 1);
+    send("/topic/prompt", PromptResponseDto.builder()
+        .script(script)
+        .prompt(promptString)
+        .build());
+  }
+
   public void sendMessageModified(Long id,boolean isOdd) {
     send("/topic/message_modified", MessageModifiedResponseDto.builder()
         .id(id)
         .isOdd(isOdd)
         .build());
   }
+
 
   public void statisticMock() {
     send("/topic/statistic", StatisticResponseDto.mock());
