@@ -109,7 +109,7 @@ public class ChartService {
     List<OddItemResponseDto> result = new ArrayList<>(combinedList);
     result.sort(Comparator.comparing(OddItemResponseDto::getTimestamp));
     return OddListResponseDto.builder()
-        .logs(combinedList)
+        .logs(result)
         .build();
   }
 
