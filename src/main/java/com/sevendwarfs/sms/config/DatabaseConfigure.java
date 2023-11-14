@@ -9,6 +9,7 @@ import com.sevendwarfs.sms.domain.OddBehaviorRepository;
 import com.sevendwarfs.sms.domain.OddMessageRepository;
 import com.sevendwarfs.sms.service.DialogService;
 import jakarta.annotation.PostConstruct;
+import java.util.TimeZone;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +32,13 @@ public class DatabaseConfigure {
 
   private final DialogService dialogService;
 
+  private final String TIMEZONE = "Asia/Seoul";
   @PostConstruct
+  @Transactional
+  public void postConstruct() {
+    TimeZone.setDefault(TimeZone.getTimeZone(TIMEZONE));
+    init();
+  }
   @Transactional
   public void init() {
     deleteEntity();
