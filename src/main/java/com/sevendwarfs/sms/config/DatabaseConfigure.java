@@ -217,7 +217,7 @@ public class DatabaseConfigure {
     base = base.withHour(13);
     saveUserMessage(base.withMinute(52), "아 오늘 너무 춥네.");
     saveAssistantMessage(base.withMinute(52).withSecond(30), "날씨가 추우니 몸 건강에 유의하셔야 해요!");
-    saveUserOddMessage(base.withMinute(54), "이히잉 야이 갸그네 그그나",
+    saveUserOddMessage(base.withMinute(54), "탈그락 털그락라가라갈가라가",
         new MessageRecognitionDto(true, false, false, true,
             "The user's utterance exhibits signs of linguistic derailment and disorganized language. The phrase '탈그락 털그락라가라갈가라가' does not make coherent sense and lacks logical structure. This suggests a disruption in the user's thought process and organization of language, which are characteristic of linguistic derailment and disorganized language commonly seen in schizophrenia."));
     saveAssistantMessage(base.withMinute(55),"죄송해요, 그 말씀은 이해하지 못했어요. 다른 질문이나 도움이 필요하신가요?");
