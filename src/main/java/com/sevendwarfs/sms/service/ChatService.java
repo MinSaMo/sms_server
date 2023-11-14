@@ -69,8 +69,8 @@ public class ChatService {
     MessageRecognitionDto response = gptService.askToSub(request, MessageRecognitionDto.class);
     log.info("recognize message result={}", response);
     if (isOdd(response)) {
-      Long oddId = messageService.createOddMessage(messageId, response);
-      return Optional.of(oddId);
+      messageService.createOddMessage(messageId, response);
+      return Optional.of(messageId);
     }
     return Optional.empty();
   }

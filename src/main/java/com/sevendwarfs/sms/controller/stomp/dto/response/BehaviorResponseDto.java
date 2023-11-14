@@ -1,24 +1,21 @@
 package com.sevendwarfs.sms.controller.stomp.dto.response;
 
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class BehaviorResponseDto {
 
   private String caption;
   private boolean isOdd;
-  private LocalDateTime timestamp;
-
-  @Builder
-  public BehaviorResponseDto(String caption, boolean isOdd) {
-    this.caption = caption;
-    this.isOdd = isOdd;
-    timestamp = LocalDateTime.now();
-  }
+  @Builder.Default
+  private LocalDateTime timestamp = LocalDateTime.now();
 
   public static BehaviorResponseDto mock(String caption) {
     return BehaviorResponseDto.builder()

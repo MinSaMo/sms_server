@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MessageResponseDto {
 
+  private boolean isOdd;
   private String script;
   private String sender;
-  private boolean isOdd;
 
   @Builder
   public MessageResponseDto(String script, String sender, boolean isOdd) {
