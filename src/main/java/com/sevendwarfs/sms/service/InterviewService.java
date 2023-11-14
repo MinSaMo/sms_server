@@ -4,6 +4,7 @@ import com.sevendwarfs.sms.controller.http.dto.request.InterviewCreateDto;
 import com.sevendwarfs.sms.controller.http.dto.response.InterviewResponseDto;
 import com.sevendwarfs.sms.controller.stomp.MessagePublisher;
 import com.sevendwarfs.sms.controller.stomp.dto.response.ChatResponseDto;
+import com.sevendwarfs.sms.domain.Dialog;
 import com.sevendwarfs.sms.domain.Interview;
 import com.sevendwarfs.sms.domain.InterviewLog;
 import com.sevendwarfs.sms.domain.InterviewLogRepository;
@@ -31,6 +32,7 @@ public class InterviewService {
   private final InterviewScheduler scheduler;
   private final MessagePublisher messagePublisher;
   private final MessageService messageService;
+  private final DialogService dialogService;
 
   @Transactional
   public InterviewResponseDto createInterview(InterviewCreateDto dto) {
@@ -47,8 +49,9 @@ public class InterviewService {
     scheduler.scheduleTask(() -> {
       String question = generateInterviewScript(interviewId);
       Long msgId = messageService.createAssistantMessage(question);
+      Dialog dialog = dialogService.getCurrentDialog();
       messagePublisher.sendMessage(msgId, question, ChatResponseDto.ASSISTANT);
-      saveInterviewLog(interview);
+      saveInterviewLog(interview,dialog);
     },interview.getQuestionTime());
   }
 
@@ -60,9 +63,10 @@ public class InterviewService {
   }
 
   @Transactional
-  public void saveInterviewLog(Interview interview) {
+  public void saveInterviewLog(Interview interview, Dialog dialog) {
     interviewLogRepository.save(InterviewLog.builder()
         .interview(interview)
+        .dialog(dialog)
         .build());
   }
 
@@ -91,7 +95,10 @@ public class InterviewService {
   public List<InterviewLog> findTodayLog() {
     LocalDateTime start = startOfDay();
     LocalDateTime end = endOfDay();
-    return interviewLogRepository.findByTimestampBetween(start, end);
+    return interviewLogRepository.findByTimestampBetween(start, end).stream()
+        .sorted((l1, l2) -> l1.getTimestamp()
+            .isAfter(l2.getTimestamp()) ? 1 : -1)
+        .toList();
   }
 
   protected LocalDateTime startOfDay() {

@@ -53,7 +53,7 @@ public class BehaviorService {
   }
 
   @Transactional
-  public OddBehavior createOddBehavior(Behavior behavior, String reason,Long videoId) {
+  public OddBehavior createOddBehavior(Behavior behavior, String reason, Long videoId) {
     return oddBehaviorRepository.save(OddBehavior.builder()
         .behavior(behavior)
         .reason(reason)
@@ -111,7 +111,11 @@ public class BehaviorService {
   public List<OddBehavior> findTodayOddBehavior() {
     LocalDateTime start = startOfDay();
     LocalDateTime end = endOfDay();
-    return oddBehaviorRepository.findByBehaviorTimestampBetween(start, end);
+    return oddBehaviorRepository.findByBehaviorTimestampBetween(start, end).stream()
+        .sorted(
+            (b1, b2) -> b1.getBehavior().getTimestamp()
+                .isAfter(b2.getBehavior().getTimestamp()) ? 1 : -1)
+        .toList();
   }
 
   @Transactional

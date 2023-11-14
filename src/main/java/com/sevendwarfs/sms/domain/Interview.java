@@ -5,10 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,13 +26,9 @@ public class Interview {
   @Column(name = "itv_time")
   private LocalTime questionTime;
 
-  @OneToMany(mappedBy = "interview")
-  private List<InterviewDialog> dialogList;
-
   @Builder
   public Interview(String question, LocalTime questionTime) {
     this.question = question;
     this.questionTime = questionTime;
-    dialogList = new ArrayList<>();
   }
 }

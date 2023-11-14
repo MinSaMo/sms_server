@@ -29,9 +29,14 @@ public class InterviewLog {
   @JoinColumn(name = "ilog_itv_id")
   private Interview interview;
 
+  @ManyToOne
+  @JoinColumn(name = "ilog_dlg_id")
+  private Dialog dialog;
+
   @Builder
-  public InterviewLog(Interview interview) {
+  public InterviewLog(Interview interview, Dialog dialog) {
     this.interview = interview;
+    this.dialog = dialog;
     timestamp = LocalDateTime.now();
   }
 }

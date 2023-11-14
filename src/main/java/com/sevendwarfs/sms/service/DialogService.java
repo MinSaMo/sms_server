@@ -40,6 +40,7 @@ public class DialogService {
         .orElseThrow(() -> new RuntimeException("Dialog not found"));
   }
 
+  @Transactional
   public void endDialog() {
     summarizeDialog();
     saveNewDialog();
@@ -57,6 +58,11 @@ public class DialogService {
         .build();
     SummarizeResponseDto response = gptService.ask(request, SummarizeResponseDto.class);
     recentSummary = response.summary();
+  }
+
+  @Transactional
+  public Dialog createDialog() {
+    return dialogRepository.save(new Dialog());
   }
 
   private String previousSummarization() {
