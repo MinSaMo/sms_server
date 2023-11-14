@@ -1,6 +1,7 @@
 package com.sevendwarfs.sms.controller.stomp;
 
 import com.sevendwarfs.sms.controller.stomp.dto.response.ChatResponseDto;
+import com.sevendwarfs.sms.controller.stomp.dto.response.DialogSummaryResponseDto;
 import com.sevendwarfs.sms.controller.stomp.dto.response.MessageClassifyResponseDto;
 import com.sevendwarfs.sms.controller.stomp.dto.response.MessageModifiedResponseDto;
 import com.sevendwarfs.sms.controller.stomp.dto.response.PromptResponseDto;
@@ -42,6 +43,12 @@ public class MessagePublisher {
         .id(id)
         .script(script)
         .classification(classify[val])
+        .build());
+  }
+
+  public void sendSummary(String summary) {
+    send("/topic/summary", DialogSummaryResponseDto.builder()
+        .summary(summary)
         .build());
   }
 

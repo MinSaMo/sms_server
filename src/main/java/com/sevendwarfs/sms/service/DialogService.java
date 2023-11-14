@@ -1,5 +1,6 @@
 package com.sevendwarfs.sms.service;
 
+import com.sevendwarfs.sms.controller.stomp.MessagePublisher;
 import com.sevendwarfs.sms.domain.Dialog;
 import com.sevendwarfs.sms.domain.DialogRepository;
 import com.sevendwarfs.sms.domain.Message;
@@ -21,6 +22,7 @@ public class DialogService {
   private final DialogRepository dialogRepository;
   private final GptService gptService;
   private final PromptManager promptManager;
+  private final MessagePublisher messagePublisher;
 
   @Getter
   private Dialog currentDialog;
@@ -28,6 +30,7 @@ public class DialogService {
   @Setter(AccessLevel.PROTECTED)
   private String recentSummary;
 
+  @Transactional
   public void init() {
     saveNewDialog();
     recentSummary = "";
@@ -58,6 +61,7 @@ public class DialogService {
         .build();
     SummarizeResponseDto response = gptService.ask(request, SummarizeResponseDto.class);
     recentSummary = response.summary();
+    messagePublisher.sendSummary(recentSummary);
   }
 
   @Transactional
