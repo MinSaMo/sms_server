@@ -1,6 +1,7 @@
 package com.sevendwarfs.sms.controller.stomp;
 
 import com.sevendwarfs.sms.controller.stomp.dto.response.ChatResponseDto;
+import com.sevendwarfs.sms.controller.stomp.dto.response.MessageClassifyResponseDto;
 import com.sevendwarfs.sms.controller.stomp.dto.response.MessageModifiedResponseDto;
 import com.sevendwarfs.sms.controller.stomp.dto.response.StatisticResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Component;
 public class MessagePublisher {
 
   private final SimpMessagingTemplate template;
+
+  private final String classify[] = {"환자의 정상적 대화로 판단", "환자의 비정상적 대화로 대화 차단"};
+
 
   public void send(String destination, Object message) {
     template.convertAndSend(destination, message);
@@ -27,6 +31,14 @@ public class MessagePublisher {
         .isOdd(false)
         .script(message)
         .sender(sender)
+        .build());
+  }
+
+  public void sendClassification(Long id, String script, int val) {
+    send("/topic/classify", MessageClassifyResponseDto.builder()
+        .id(id)
+        .script(script)
+        .classification(classify[val])
         .build());
   }
 

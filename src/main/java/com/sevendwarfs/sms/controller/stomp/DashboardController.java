@@ -44,6 +44,7 @@ public class DashboardController {
     try {
 
       MessageClassification classification = chatService.classifyMessage(script);
+      messagePublisher.sendClassification(userMessageId, script, classification.getVal());
 
       Long replyId;
       if (classification.equals(MessageClassification.NOT_SUPPORTED)) {
