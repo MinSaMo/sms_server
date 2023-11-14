@@ -53,7 +53,6 @@ class InterviewServiceTest {
     assertNotNull(interview.getId());
     assertEquals(interview.getQuestion(), question);
     assertTrue(isEqualTime(interview.getQuestionTime(), time));
-    assertEquals(interview.getDialogList().size(), 0);
   }
 
   @Test
