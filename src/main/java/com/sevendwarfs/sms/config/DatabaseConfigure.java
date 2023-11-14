@@ -202,12 +202,12 @@ public class DatabaseConfigure {
     saveUserMessage(base.withMinute(21),"안녕 오늘 날씨 정말 좋지?");
     saveAssistantMessage(base.withMinute(22),"네 맞습니다. 오늘 같은날 즐거운 노래를 불러보는 것은 어떨까요?");
     saveUserMessage(base.withMinute(23), "병원에 너무 오래있다 보니까 너무 외롭다.");
-    saveAssistantMessage(base.withMinute(23),
+    saveAssistantMessage(base.withMinute(23).withSecond(30),
         "병원에서 제공하는 문화적이거나 예술적인 활동에 참여해보세요. 그런 활동을 통해 새로운 경험을 갖는 것은 외로움 극복에 도움이 될것입니다.");
     saveUserOddMessage(base.withMinute(24), "근데 저기 창문너머에 빨간옷을 입은 여자가 나에게 손을 흔들고 있어.",
         new MessageRecognitionDto(false, false, true, false,
             "The possibility of hallucinations describing visual visions in which speech does not actually exist and the symptoms of derailment in a way that speech is not common."));
-    saveAssistantMessage(base.withMinute(24), "그런 상황이라면, 주변에 있는 간호사나 직원에게 알려주시는 것이 좋을 것 같아요.");
+    saveAssistantMessage(base.withMinute(24).withSecond(30), "그런 상황이라면, 주변에 있는 간호사나 직원에게 알려주시는 것이 좋을 것 같아요.");
     saveUserMessage(base.withMinute(25),"알겠어.");
 
     saveOddBehavior(base.withMinute(50), "He ate his meal. And he cut his arm with a knife.", 0L,
@@ -216,7 +216,7 @@ public class DatabaseConfigure {
     dialogService.saveNewDialog();
     base = base.withHour(13);
     saveUserMessage(base.withMinute(52), "아 오늘 너무 춥네.");
-    saveAssistantMessage(base.withMinute(52), "날씨가 추우니 몸 건강에 유의하셔야 해요!");
+    saveAssistantMessage(base.withMinute(52).withSecond(30), "날씨가 추우니 몸 건강에 유의하셔야 해요!");
     saveUserOddMessage(base.withMinute(54), "이히잉 야이 갸그네 그그나",
         new MessageRecognitionDto(true, false, false, true,
             "The user's utterance exhibits signs of linguistic derailment and disorganized language. The phrase '탈그락 털그락라가라갈가라가' does not make coherent sense and lacks logical structure. This suggests a disruption in the user's thought process and organization of language, which are characteristic of linguistic derailment and disorganized language commonly seen in schizophrenia."));
