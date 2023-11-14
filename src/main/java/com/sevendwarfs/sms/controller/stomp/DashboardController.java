@@ -13,6 +13,7 @@ import com.sevendwarfs.sms.service.StatisticService;
 import com.sevendwarfs.sms.service.enums.MessageClassification;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -103,6 +104,7 @@ public class DashboardController {
           messagePublisher.sendStatistic(statistic);
         });
       }
+      Thread.sleep(new Random().nextInt(5) + 5);
       return BehaviorResponseDto.builder()
           .caption(caption)
           .isOdd(isOdd)
@@ -112,6 +114,8 @@ public class DashboardController {
           .caption(error.getMessage())
           .isOdd(false)
           .build();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
     }
   }
 
