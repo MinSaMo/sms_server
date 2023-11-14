@@ -2,6 +2,8 @@ package com.sevendwarfs.sms.service;
 
 import com.sevendwarfs.sms.controller.http.dto.response.DialogDetailResponseDto;
 import com.sevendwarfs.sms.controller.http.dto.response.MessageResponseDto;
+import com.sevendwarfs.sms.controller.stomp.MessagePublisher;
+import com.sevendwarfs.sms.controller.stomp.dto.response.ChatResponseDto;
 import com.sevendwarfs.sms.domain.Dialog;
 import com.sevendwarfs.sms.domain.Message;
 import com.sevendwarfs.sms.domain.MessageRepository;
@@ -26,6 +28,7 @@ public class MessageService {
   private final MessageRepository messageRepository;
   private final OddMessageRepository oddMessageRepository;
   private final DialogService dialogService;
+  private final MessagePublisher messagePublisher;
 
   @Transactional
   public Long createUserMessage(String script) {
@@ -57,6 +60,7 @@ public class MessageService {
   @Transactional
   public void deleteOddMessage(Long messageId) {
     oddMessageRepository.deleteByMessageId(messageId);
+    messagePublisher.sendMessageModified(messageId, false);
   }
 
   @Transactional
@@ -70,6 +74,37 @@ public class MessageService {
     return oddMessageRepository.findByMessageTimestampBetween(startOfWeek(), endOfWeek());
   }
 
+  @Transactional
+  public List<ChatResponseDto> getTodayChat() {
+
+    List<Message> messageList = findTodayMessage();
+    List<OddMessage> oddMessageList = findTodayOddMessage();
+
+    return messageList.stream()
+        .map(msg -> ChatResponseDto.builder()
+            .id(msg.getId())
+            .isOdd(isOddMessage(msg, oddMessageList))
+            .sender(msg.getSender())
+            .script(msg.getContent())
+            .timestamp(msg.getTimestamp())
+            .build())
+        .sorted((m1, m2) -> m1.getTimestamp().isAfter(m2.getTimestamp()) ? 1 : -1)
+        .toList();
+  }
+
+  private List<Message> findTodayMessage() {
+    return messageRepository.findByTimestampBetween(startOfDay(),
+        endOfDay());
+  }
+
+  private boolean isOddMessage(Message message, List<OddMessage> oddMessageList) {
+    for (OddMessage oddMessage : oddMessageList) {
+      if (oddMessage.getMessage().equals(message)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   @Transactional
   public List<OddMessage> findTodayOddMessage() {

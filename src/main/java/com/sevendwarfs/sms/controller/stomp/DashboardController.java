@@ -50,6 +50,7 @@ public class DashboardController {
         return ChatResponseDto.builder()
             .id(replyId)
             .sender(ChatResponseDto.ASSISTANT)
+            .isOdd(true)
             .script(NOT_SUPPORTED)
             .build();
       }
@@ -61,7 +62,7 @@ public class DashboardController {
         Optional<Long> isOdd = chatService.recognizeMessage(userMessageId);
         if (isOdd.isPresent()) {
           Long id = isOdd.get();
-          messagePublisher.sendOddMessageDetected(id);
+          messagePublisher.sendMessageModified(id,true);
           StatisticResponseDto statistic = statisticService.getStatistic(
               LocalDateTime.now().getMonthValue());
           messagePublisher.sendStatistic(statistic);
@@ -72,12 +73,14 @@ public class DashboardController {
           .script(reply)
           .id(replyId)
           .sender(ChatResponseDto.ASSISTANT)
+          .isOdd(false)
           .build();
     } catch (GptRemoteServerError error) {
       return ChatResponseDto.builder()
           .id(-1L)
           .script(error.getMessage())
           .sender(ChatResponseDto.ASSISTANT)
+          .isOdd(true)
           .build();
     }
 
@@ -105,7 +108,10 @@ public class DashboardController {
           .isOdd(isOdd)
           .build();
     } catch (GptRemoteServerError error) {
-      return null;
+      return BehaviorResponseDto.builder()
+          .caption(error.getMessage())
+          .isOdd(false)
+          .build();
     }
   }
 

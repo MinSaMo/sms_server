@@ -38,7 +38,7 @@ public class OddItemResponseDto {
 
   public static OddItemResponseDto of(OddMessage obj, Message message, Long dialogId) {
     return OddItemResponseDto.builder()
-        .id(obj.getId())
+        .id(message.getId())
         .type(TYPE_MESSAGE)
         .timestamp(message.getTimestamp())
         .content(message.getContent())
@@ -49,7 +49,7 @@ public class OddItemResponseDto {
 
   public static OddItemResponseDto of(OddBehavior obj, Behavior behavior) {
     return OddItemResponseDto.builder()
-        .id(obj.getId())
+        .id(behavior.getId())
         .type(TYPE_BEHAVIOR)
         .timestamp(behavior.getTimestamp())
         .content(behavior.getCaption())

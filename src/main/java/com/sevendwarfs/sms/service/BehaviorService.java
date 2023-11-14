@@ -1,6 +1,7 @@
 package com.sevendwarfs.sms.service;
 
 import com.sevendwarfs.sms.controller.http.dto.response.BehaviorDetailResponseDto;
+import com.sevendwarfs.sms.controller.stomp.dto.response.BehaviorResponseDto;
 import com.sevendwarfs.sms.domain.Behavior;
 import com.sevendwarfs.sms.domain.BehaviorRepository;
 import com.sevendwarfs.sms.domain.OddBehavior;
@@ -70,6 +71,35 @@ public class BehaviorService {
     return behaviorRepository.save(Behavior.builder()
         .caption(caption)
         .build());
+  }
+
+  @Transactional
+  public List<BehaviorResponseDto> getTodayBehaviorChart() {
+    List<OddBehavior> oddBehaviorList = findTodayOddBehavior();
+    List<Behavior> behaviorList = findTodayBehavior();
+
+    return behaviorList.stream()
+        .map(behavior -> BehaviorResponseDto.builder()
+            .caption(behavior.getCaption())
+            .isOdd(isOddBehavior(behavior, oddBehaviorList))
+            .timestamp(behavior.getTimestamp())
+            .build())
+        .sorted((b1, b2) -> b1.getTimestamp().isAfter(b2.getTimestamp()) ? 1 : -1)
+        .toList();
+  }
+
+  private List<Behavior> findTodayBehavior() {
+    return behaviorRepository.findByTimestampBetween(startOfDay(),
+        endOfDay());
+  }
+
+  private boolean isOddBehavior(Behavior behavior, List<OddBehavior> oddBehaviorList) {
+    for (OddBehavior odd : oddBehaviorList) {
+      if (odd.getBehavior().equals(behavior)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Transactional
