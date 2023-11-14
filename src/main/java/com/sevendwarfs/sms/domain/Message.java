@@ -26,7 +26,7 @@ public class Message {
   @Column(name = "msg_id")
   private Long id;
 
-  @Column(name = "msg_content")
+  @Column(name = "msg_content", length = 1000)
   private String content;
 
   @Column(name = "msg_sender")

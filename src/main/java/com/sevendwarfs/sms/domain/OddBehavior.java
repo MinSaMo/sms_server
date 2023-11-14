@@ -21,7 +21,7 @@ public class OddBehavior {
   @Column(name = "oddb_id")
   private Long id;
 
-  @Column(name = "oddb_reason")
+  @Column(name = "oddb_reason", length = 1000)
   private String reason;
 
   @Column(name = "oddb_video_id")

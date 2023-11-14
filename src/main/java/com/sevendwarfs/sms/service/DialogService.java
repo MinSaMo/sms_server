@@ -40,6 +40,7 @@ public class DialogService {
         .orElseThrow(() -> new RuntimeException("Dialog not found"));
   }
 
+  @Transactional
   public void endDialog() {
     summarizeDialog();
     saveNewDialog();
@@ -59,6 +60,11 @@ public class DialogService {
     recentSummary = response.summary();
   }
 
+  @Transactional
+  public Dialog createDialog() {
+    return dialogRepository.save(new Dialog());
+  }
+
   private String previousSummarization() {
     return String.format("Previous Summary: %s", recentSummary);
   }
@@ -75,7 +81,8 @@ public class DialogService {
   }
 
 
-  private void saveNewDialog() {
+  @Transactional
+  public void saveNewDialog() {
     currentDialog = dialogRepository.save(new Dialog());
     log.info("new dialog={}", currentDialog);
   }

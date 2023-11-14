@@ -45,6 +45,12 @@ public class MessageService {
     log.info("created assistant message={}", message);
     return message.getId();
   }
+  @Transactional
+  public Long createInterviewAssistantMessage(String script, Dialog dialog) {
+    Message message = messageRepository.save(Message.assistantMessage(script));
+    log.info("created assistant message={}", message);
+    return message.getId();
+  }
 
   @Transactional
   public Long createOddMessage(Long messageId, MessageRecognitionDto recognition) {
@@ -110,7 +116,11 @@ public class MessageService {
   public List<OddMessage> findTodayOddMessage() {
     LocalDateTime start = startOfDay();
     LocalDateTime end = endOfDay();
-    return oddMessageRepository.findByMessageTimestampBetween(start, end);
+    return oddMessageRepository.findByMessageTimestampBetween(start, end).stream()
+        .sorted(
+            (m1, m2) -> m1.getMessage().getTimestamp()
+                .isAfter(m2.getMessage().getTimestamp()) ? 1 : -1)
+        .toList();
   }
 
   @Transactional

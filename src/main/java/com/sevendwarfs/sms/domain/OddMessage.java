@@ -24,7 +24,7 @@ public class OddMessage {
   private Long id;
 
   @Setter
-  @Column(name = "oddm_reason")
+  @Column(name = "oddm_reason", length = 1000)
   private String reason;
 
   /*
@@ -77,4 +77,23 @@ public class OddMessage {
         ", message=" + message.getContent() +
         '}';
   }
+
+  public String symptomString() {
+    StringBuilder sb = new StringBuilder();
+    if (this.getIsDisorganized()) {
+      sb.append("와해된 언어 ");
+    }
+    if (this.getIsDelusions()) {
+      sb.append("환각 ");
+    }
+    if (this.getIsLinguisticDerailment()) {
+      sb.append("언어의 탈선 ");
+    }
+    if (this.getIsHallucination()) {
+      sb.append("망상 ");
+    }
+    sb.append("증상");
+    return sb.toString();
+  }
+
 }

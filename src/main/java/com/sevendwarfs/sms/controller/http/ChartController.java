@@ -8,7 +8,13 @@ import com.sevendwarfs.sms.service.BehaviorService;
 import com.sevendwarfs.sms.service.ChartService;
 import com.sevendwarfs.sms.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.IOUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,11 +63,30 @@ public class ChartController {
     return ResponseEntity.ok().body(response);
   }
 
+  @Operation(description = "차트 xlsx 다운로드 API")
+  @GetMapping("/today/download")
+  public void xlsxDownload(HttpServletResponse response) {
+    response.setHeader("Content-Disposition", "attachment;filename=testExcel1.xls");
+    response.setContentType("application/octet-stream");
+
+    Workbook workbook = chartService.makeXLSXFile();
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    try {
+      workbook.write(outputStream);
+      ByteArrayInputStream stream = new ByteArrayInputStream(
+          outputStream.toByteArray());
+      IOUtils.copy(stream, response.getOutputStream());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   @Operation(description = "이상행동 삭제 API")
   @DeleteMapping("/behavior/{behaviorId}")
   public ResponseEntity deleteOddBehavior(
       @PathVariable Long behaviorId
   ) {
+
     behaviorService.deleteOddBehavior(behaviorId);
     return ResponseEntity.noContent().build();
   }
