@@ -81,7 +81,8 @@ public class DialogService {
   }
 
 
-  private void saveNewDialog() {
+  @Transactional
+  public void saveNewDialog() {
     currentDialog = dialogRepository.save(new Dialog());
     log.info("new dialog={}", currentDialog);
   }

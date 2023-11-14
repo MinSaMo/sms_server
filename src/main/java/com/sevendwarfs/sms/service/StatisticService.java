@@ -51,7 +51,7 @@ public class StatisticService {
                 Collectors.groupingBy(behavior ->
                     behavior.getBehavior().getTimestamp().get(WeekFields.ISO.weekOfMonth())));
 
-    addEmptyWeeks(messageMap,LocalDateTime.now());
+    addEmptyWeeks(messageMap, LocalDateTime.now());
     addEmptyWeeks(behaviorMap, LocalDateTime.now());
 
     return StatisticResponseDto.builder()
