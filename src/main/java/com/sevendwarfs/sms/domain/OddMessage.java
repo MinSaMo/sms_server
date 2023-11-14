@@ -24,7 +24,7 @@ public class OddMessage {
   private Long id;
 
   @Setter
-  @Column(name = "oddm_reason")
+  @Column(name = "oddm_reason", length = 1000)
   private String reason;
 
   /*

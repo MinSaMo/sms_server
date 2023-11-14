@@ -21,7 +21,7 @@ public class Behavior {
   @Column(name = "bhv_id")
   private Long id;
 
-  @Column(name = "bhv_captino")
+  @Column(name = "bhv_captino",length = 1000)
   private String caption;
 
   @Setter
