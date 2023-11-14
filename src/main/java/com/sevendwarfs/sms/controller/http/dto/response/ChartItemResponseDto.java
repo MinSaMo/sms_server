@@ -59,23 +59,10 @@ public class ChartItemResponseDto {
   }
 
   public static ChartItemResponseDto of(OddMessage oddMessage, Message message) {
-    StringBuilder sb = new StringBuilder();
-    if (oddMessage.getIsDisorganized()) {
-      sb.append("와해된 언어 ");
-    }
-    if (oddMessage.getIsDelusions()) {
-      sb.append("환각 ");
-    }
-    if (oddMessage.getIsLinguisticDerailment()) {
-      sb.append("언어의 탈선 ");
-    }
-    if (oddMessage.getIsHallucination()) {
-      sb.append("망상 ");
-    }
-    sb.append("증상");
+    String symptom = oddMessage.symptomString();
     return ChartItemResponseDto.builder()
         .type(MESSAGE)
-        .content(sb.toString())
+        .content(symptom)
         .timestamp(message.getTimestamp())
         .build();
   }

@@ -5,7 +5,6 @@ import com.sevendwarfs.sms.domain.DialogRepository;
 import com.sevendwarfs.sms.domain.Message;
 import com.sevendwarfs.sms.service.dto.gpt.SummarizeResponseDto;
 import dev.ai4j.openai4j.chat.ChatCompletionRequest;
-import jakarta.annotation.PostConstruct;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +28,7 @@ public class DialogService {
   @Setter(AccessLevel.PROTECTED)
   private String recentSummary;
 
-  @PostConstruct
-  protected void init() {
+  public void init() {
     saveNewDialog();
     recentSummary = "";
     log.info("init dialog={}", currentDialog);
@@ -42,6 +40,7 @@ public class DialogService {
         .orElseThrow(() -> new RuntimeException("Dialog not found"));
   }
 
+  @Transactional
   public void endDialog() {
     summarizeDialog();
     saveNewDialog();
@@ -61,6 +60,11 @@ public class DialogService {
     recentSummary = response.summary();
   }
 
+  @Transactional
+  public Dialog createDialog() {
+    return dialogRepository.save(new Dialog());
+  }
+
   private String previousSummarization() {
     return String.format("Previous Summary: %s", recentSummary);
   }
@@ -77,7 +81,8 @@ public class DialogService {
   }
 
 
-  private void saveNewDialog() {
+  @Transactional
+  public void saveNewDialog() {
     currentDialog = dialogRepository.save(new Dialog());
     log.info("new dialog={}", currentDialog);
   }
