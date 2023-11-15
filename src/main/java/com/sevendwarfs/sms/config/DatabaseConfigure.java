@@ -190,10 +190,12 @@ public class DatabaseConfigure {
     saveAssistantMessage(base.withMinute(3), "약을 꾸준히 복용하셔서 좋습니다. 약을 복용하시면 더 나은 결과를 얻을 수 있을 거예요.");
 
     Dialog curr = dialogService.getCurrentDialog();
-    interviewLogRepository.save(InterviewLog.builder()
-            .dialog(curr)
-            .interview(interview)
-        .build());
+    InterviewLog log = InterviewLog.builder()
+        .dialog(curr)
+        .interview(interview)
+        .build();
+    log.setTimestamp(base.withMinute(1));
+    interviewLogRepository.save(log);
     dialogService.saveNewDialog();
 
     saveNormalBehavior(base,"He is sitting on a chair and reading a book.");

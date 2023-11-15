@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
@@ -22,6 +23,7 @@ public class InterviewLog {
   @Column(name = "ilog_id")
   private Long id;
 
+  @Setter
   @Column(name = "ilog_timestamp")
   private LocalDateTime timestamp;
 
