@@ -49,6 +49,16 @@ public class DashboardController {
       Long replyId;
       if (classification.equals(MessageClassification.NOT_SUPPORTED)) {
         replyId = messageService.createAssistantMessage(NOT_SUPPORTED);
+        startBackgroundJob(() -> {
+          Optional<Long> isOdd = chatService.recognizeMessage(userMessageId);
+          if (isOdd.isPresent()) {
+            Long id = isOdd.get();
+            messagePublisher.sendMessageModified(id,true);
+            StatisticResponseDto statistic = statisticService.getStatistic(
+                LocalDateTime.now().getMonthValue());
+            messagePublisher.sendStatistic(statistic);
+          }
+        });
         return ChatResponseDto.builder()
             .id(replyId)
             .sender(ChatResponseDto.ASSISTANT)
