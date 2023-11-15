@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
@@ -66,7 +67,12 @@ public class ChartController {
   @Operation(description = "차트 xlsx 다운로드 API")
   @GetMapping("/today/download")
   public void xlsxDownload(HttpServletResponse response) {
-    response.setHeader("Content-Disposition", "attachment;filename=testExcel1.xls");
+    LocalDateTime now = LocalDateTime.now();
+    String fileName = String.format("%d-%d-%d %d%d", now.getYear(), now.getMonth().getValue(),
+        now.getDayOfMonth(),
+        now.getHour(), now.getMinute());
+    String value = String.format("attachment;filename=%s.xls", fileName);
+    response.setHeader("Content-Disposition", value);
     response.setContentType("application/octet-stream");
 
     Workbook workbook = chartService.makeXLSXFile();
