@@ -62,6 +62,7 @@ public class DatabaseConfigure {
     deleteEntity();
     dialogService.init();
     createMockData();
+    dialogService.init();
   }
 
   @Transactional
