@@ -29,6 +29,7 @@ services:
     env_file:
       - .env
     environment:
+      TZ: 'Asia/Seoul'
       SPRING_DATASOURCE_URL: jdbc:mysql://sms_mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
