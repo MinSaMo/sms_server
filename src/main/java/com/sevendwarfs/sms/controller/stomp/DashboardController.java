@@ -115,7 +115,8 @@ public class DashboardController {
           messagePublisher.sendStatistic(statistic);
         });
       }
-      Thread.sleep(new Random().nextInt(5) + 5);
+      int sec = new Random().nextInt(5) + 2;
+      Thread.sleep(sec * 1000);
       return BehaviorResponseDto.builder()
           .caption(caption)
           .isOdd(isOdd)
