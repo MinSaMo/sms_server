@@ -177,7 +177,7 @@ public class DatabaseConfigure {
         LocalDate.now().getYear(),
         LocalDateTime.now().getMonthValue(),
         LocalDateTime.now().getDayOfMonth(),
-        11,
+        9,
         0
     );
     Behavior behaviorDto, behavior;
@@ -201,7 +201,7 @@ public class DatabaseConfigure {
 
     saveNormalBehavior(base,"He is sitting on a chair and reading a book.");
 
-    base = base.withHour(12);
+    base = base.withHour(10);
     saveUserMessage(base.withMinute(21),"안녕 오늘 날씨 정말 좋지?");
     saveAssistantMessage(base.withMinute(22),"네 맞습니다. 오늘 같은날 즐거운 노래를 불러보는 것은 어떨까요?");
     saveUserMessage(base.withMinute(23), "병원에 너무 오래있다 보니까 너무 외롭다.");
@@ -217,7 +217,7 @@ public class DatabaseConfigure {
         "Self-harm refers to severe mental distress or bizarre behavior and is often seen in disorders such as schizophrenia and severe depression");
 
     dialogService.saveNewDialog();
-    base = base.withHour(13);
+    base = base.withHour(11);
     saveUserMessage(base.withMinute(52), "아 오늘 너무 춥네.");
     saveAssistantMessage(base.withMinute(52).withSecond(30), "날씨가 추우니 몸 건강에 유의하셔야 해요!");
     saveUserOddMessage(base.withMinute(54), "탈그락 털그락라가라갈가라가",
